@@ -9,6 +9,30 @@ import {
   query, where, onSnapshot, getDoc, setDoc, serverTimestamp
 } from 'firebase/firestore';
 
+// ── downscale image for AI scan (Vercel Functions cap request bodies at 4.5MB) ─
+async function resizeImageForScan(file, maxDimension = 1600, quality = 0.8) {
+  const dataUrl = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = e => resolve(e.target.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+  const img = await new Promise((resolve, reject) => {
+    const el = new Image();
+    el.onload = () => resolve(el);
+    el.onerror = reject;
+    el.src = dataUrl;
+  });
+  const scale = Math.min(1, maxDimension / Math.max(img.width, img.height));
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(img.width * scale);
+  canvas.height = Math.round(img.height * scale);
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  const resizedDataUrl = canvas.toDataURL('image/jpeg', quality);
+  return { base64: resizedDataUrl.split(',')[1], mimeType: 'image/jpeg' };
+}
+
 // ── receipt image upload (Vercel Blob, via server route) ──────────────────────
 async function uploadReceiptImage(file) {
   const body = new FormData();
@@ -346,16 +370,11 @@ export default function AppPage() {
     setScanLoading(true);
     setFormError('');
     try {
-      const base64 = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = e => resolve(e.target.result.split(',')[1]);
-        reader.onerror = reject;
-        reader.readAsDataURL(receiptFile);
-      });
+      const { base64, mimeType } = await resizeImageForScan(receiptFile);
       const res = await fetch('/api/scan-receipt', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image: base64, mimeType: receiptFile.type }),
+        body: JSON.stringify({ image: base64, mimeType }),
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
