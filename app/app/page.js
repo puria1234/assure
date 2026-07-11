@@ -9,22 +9,14 @@ import {
   query, where, onSnapshot, getDoc, setDoc, serverTimestamp
 } from 'firebase/firestore';
 
-// ── imgbb upload ───────────────────────────────────────────────────────────────
-async function uploadToImgbb(file) {
-  const base64 = await new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = (e) => resolve(e.target.result.split(',')[1]);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
+// ── receipt image upload (Vercel Blob, via server route) ──────────────────────
+async function uploadReceiptImage(file) {
   const body = new FormData();
-  body.append('key', process.env.NEXT_PUBLIC_IMGBB_API_KEY);
-  body.append('image', base64);
-  body.append('name', file.name);
-  const res = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body });
+  body.append('file', file);
+  const res = await fetch('/api/upload-receipt', { method: 'POST', body });
   const json = await res.json();
-  if (!json.success) throw new Error(json.error?.message || 'Image upload failed');
-  return json.data.url;
+  if (!res.ok) throw new Error(json.error || 'Image upload failed');
+  return json.url;
 }
 
 // ── Module-level helpers ───────────────────────────────────────────────────────
@@ -464,10 +456,10 @@ export default function AppPage() {
       let receiptUrl = formData.receiptUrl || '';
       let receiptType = formData.receiptType || '';
 
-      // Upload receipt image via imgbb
+      // Upload receipt image via Vercel Blob
       if (receiptFile) {
         setUploadingReceipt(true);
-        receiptUrl = await uploadToImgbb(receiptFile);
+        receiptUrl = await uploadReceiptImage(receiptFile);
         receiptType = 'image';
         setUploadingReceipt(false);
       }
