@@ -6,7 +6,8 @@ import { auth, db } from '../../lib/firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import {
   collection, addDoc, updateDoc, deleteDoc, doc,
-  query, where, onSnapshot, getDoc, setDoc, serverTimestamp
+  query, where, onSnapshot, getDoc, setDoc, serverTimestamp,
+  runTransaction, increment
 } from 'firebase/firestore';
 
 // ── downscale image for AI scan (Vercel Functions cap request bodies at 4.5MB) ─
@@ -55,13 +56,13 @@ function getStatus(w) {
   return 'active';
 }
 function formatDate(s) {
-  if (!s) return '—';
+  if (!s) return 'N/A';
   const [y,m,d] = s.split('-');
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   return `${months[parseInt(m)-1]} ${parseInt(d)}, ${y}`;
 }
 function formatPrice(p) {
-  if (!p && p !== 0) return '—';
+  if (!p && p !== 0) return 'N/A';
   return '$' + parseFloat(p).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
 }
 
@@ -156,11 +157,13 @@ export default function AppPage() {
   // ── AI receipt scan ────────────────────────────────────────────────────────
   const [scanLoading, setScanLoading] = useState(false);
   const [scanMonthlyCount, setScanMonthlyCount] = useState(0);
-  const SCAN_LIMIT = 5;
+  const SCAN_LIMIT = 3;       // Free plan limit
 
   // ── AI claim assistant ─────────────────────────────────────────────────────
   const [claimMonthlyCount, setClaimMonthlyCount] = useState(0);
-  const CLAIM_LIMIT = 10;
+  const CLAIM_LIMIT = 1;      // Free plan limit
+
+  const WARRANTY_LIMIT = 5;   // Free plan limit
   const [showClaimPicker, setShowClaimPicker] = useState(false);
   const [claimPickerSearch, setClaimPickerSearch] = useState('');
   const [showClaimModal, setShowClaimModal] = useState(false);
@@ -260,7 +263,7 @@ export default function AppPage() {
       (err) => {
         console.error('Warranties listener error:', err);
         if (!isSigningOutRef.current) {
-          showToast('Could not load warranties — check Firestore rules.', 'error');
+          showToast('Could not load warranties. Check Firestore rules.', 'error');
         }
       }
     );
@@ -350,7 +353,7 @@ export default function AppPage() {
       reader.onload = (e) => setReceiptPreview(e.target.result);
       reader.readAsDataURL(file);
     } else {
-      setReceiptPreview(null); // PDF — no preview
+      setReceiptPreview(null); // PDF, no preview
     }
   };
 
@@ -371,9 +374,10 @@ export default function AppPage() {
     setFormError('');
     try {
       const { base64, mimeType } = await resizeImageForScan(receiptFile);
+      const idToken = await currentUser.getIdToken();
       const res = await fetch('/api/scan-receipt', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${idToken}` },
         body: JSON.stringify({ image: base64, mimeType }),
       });
       if (!res.ok) {
@@ -434,9 +438,10 @@ export default function AppPage() {
     setClaimInput('');
     setClaimLoading(true);
     try {
+      const idToken = await currentUser.getIdToken();
       const res = await fetch('/api/claim-chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${idToken}` },
         body: JSON.stringify({
           messages: updated,
           warrantyContext: { ...claimWarranty, status: getStatus(claimWarranty) },
@@ -504,8 +509,26 @@ export default function AppPage() {
         await Promise.race([updateDoc(doc(db, 'warranties', editingId), payload), timeout]);
         showToast('Warranty updated.', 'success');
       } else {
+        if (warranties.length >= WARRANTY_LIMIT) {
+          setFormError(`Free plan limit reached (${WARRANTY_LIMIT} warranties). Upgrade to add more.`);
+          setSavingWarranty(false);
+          return;
+        }
         payload.createdAt = serverTimestamp();
-        await Promise.race([addDoc(collection(db, 'warranties'), payload), timeout]);
+        const userRef = doc(db, 'users', currentUser.uid);
+        await Promise.race([
+          runTransaction(db, async (tx) => {
+            const userSnap = await tx.get(userRef);
+            const currentCount = userSnap.exists() ? (userSnap.data().warrantyCount || 0) : 0;
+            if (currentCount >= WARRANTY_LIMIT) {
+              throw new Error(`Free plan limit reached (${WARRANTY_LIMIT} warranties).`);
+            }
+            const newWarrantyRef = doc(collection(db, 'warranties'));
+            tx.set(newWarrantyRef, payload);
+            tx.update(userRef, { warrantyCount: increment(1) });
+          }),
+          timeout,
+        ]);
         showToast('Warranty added.', 'success');
       }
       setShowWarrantyModal(false);
@@ -516,7 +539,7 @@ export default function AppPage() {
     } catch (err) {
       setUploadingReceipt(false);
       setFormError(err.message === 'timeout'
-        ? 'Request timed out — check your internet connection and Firestore rules.'
+        ? 'Request timed out. Check your internet connection and Firestore rules.'
         : `Failed to save: ${err.code || err.message || 'unknown error'}`);
       console.error('saveWarranty error:', err);
     } finally {
@@ -529,7 +552,11 @@ export default function AppPage() {
     if (!pendingDeleteId) return;
     setDeletingWarranty(true);
     try {
-      await deleteDoc(doc(db, 'warranties', pendingDeleteId));
+      const userRef = doc(db, 'users', currentUser.uid);
+      await runTransaction(db, async (tx) => {
+        tx.delete(doc(db, 'warranties', pendingDeleteId));
+        tx.update(userRef, { warrantyCount: increment(-1) });
+      });
       showToast('Warranty deleted.', 'info');
       setShowDeleteModal(false);
       setPendingDeleteId(null);
@@ -556,10 +583,10 @@ export default function AppPage() {
         setNotifPermission(permission);
       }
       if (permission === 'denied') {
-        showToast('Notifications are blocked — enable them in your browser settings.', 'error');
+        showToast('Notifications are blocked. Enable them in your browser settings.', 'error');
         return;
       }
-      new Notification('Aegis — Test Notification', {
+      new Notification('Aegis: Test Notification', {
         body: 'Browser notifications are working correctly.',
         icon: '/favicon.png',
       });
@@ -594,7 +621,7 @@ export default function AppPage() {
       setShowNotifModal(false);
     } catch (err) {
       showToast(err.message === 'timeout'
-        ? 'Request timed out — check Firestore rules.'
+        ? 'Request timed out. Check Firestore rules.'
         : `Failed to save: ${err.code || err.message || 'unknown error'}`, 'error');
       console.error('saveNotifPrefs error:', err);
     } finally {
@@ -750,7 +777,7 @@ export default function AppPage() {
         {/* ── Footer bar ── */}
         <div style={{ borderTop:'1px solid #161616', padding:'11px 20px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
           <div style={{ fontSize:'12px', color:'#555', fontWeight:500 }}>
-            {w.price ? formatPrice(w.price) : '—'}
+            {w.price ? formatPrice(w.price) : 'N/A'}
           </div>
           {/* Edit */}
           <button
@@ -785,7 +812,7 @@ export default function AppPage() {
             <div className="list-row-expiry-mobile" style={{ fontSize:'11px', color:'#555', marginTop:'1px' }}>{formatDate(w.expiryDate)}</div>
           </div>
         </div>
-        <div className="list-col-desktop" style={{ fontSize:'12px', color:'#666' }}>{w.category || '—'}</div>
+        <div className="list-col-desktop" style={{ fontSize:'12px', color:'#666' }}>{w.category || 'N/A'}</div>
         <div className="list-col-desktop" style={{ fontSize:'12px', color:'#666' }}>{formatDate(w.expiryDate)}</div>
         <div style={{ fontSize:'12px', fontWeight:700, color:sColor, flexShrink:0 }}>{days < 0 ? `${Math.abs(days)}d ago` : `${days}d`}</div>
         <div style={{ flexShrink:0 }}>
@@ -1190,8 +1217,8 @@ export default function AppPage() {
                   { label:'Days Remaining', value: days < 0 ? `${Math.abs(days)} days ago` : `${days} days`, color:sColor },
                   { label:'Purchase Date', value:formatDate(w.purchaseDate) },
                   { label:'Value', value:formatPrice(w.price) },
-                  { label:'Category', value:w.category || '—' },
-                  { label:'Retailer', value:w.retailer || '—' },
+                  { label:'Category', value:w.category || 'N/A' },
+                  { label:'Retailer', value:w.retailer || 'N/A' },
                 ].map(({ label, value, color }) => (
                   <div key={label} style={{ background:'#0d0d0d', border:'1px solid #1a1a1a', borderRadius:'10px', padding:'12px' }}>
                     <div style={{ fontSize:'10px', color:'#444', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:'4px' }}>{label}</div>
@@ -1283,7 +1310,7 @@ export default function AppPage() {
                   <div style={{ fontSize:'13px', fontWeight:600, color:'#ccc' }}>Browser Notifications</div>
                   <div style={{ fontSize:'11px', color:'#444', marginTop:'2px' }}>
                     {notifPermission === 'granted' && 'Permission granted'}
-                    {notifPermission === 'denied' && 'Blocked — enable in browser settings'}
+                    {notifPermission === 'denied' && 'Blocked. Enable in browser settings.'}
                     {notifPermission === 'default' && 'Permission not yet requested'}
                   </div>
                 </div>
@@ -1433,7 +1460,7 @@ export default function AppPage() {
               <div style={{ padding:'16px 20px', borderTop:'1px solid #1a1a1a', background:'#0d0d0d', flexShrink:0, textAlign:'center' }}>
                 <div style={{ display:'inline-flex', alignItems:'center', gap:'8px', background:'rgba(239,68,68,0.06)', border:'1px solid rgba(239,68,68,0.15)', borderRadius:'10px', padding:'10px 16px' }}>
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                  <span style={{ fontSize:'12px', color:'#ef4444', fontWeight:600 }}>Message limit reached ({CLAIM_LIMIT}/{CLAIM_LIMIT}) — resets next month</span>
+                  <span style={{ fontSize:'12px', color:'#ef4444', fontWeight:600 }}>Message limit reached ({CLAIM_LIMIT}/{CLAIM_LIMIT}). Resets next month.</span>
                 </div>
               </div>
             ) : (

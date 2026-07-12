@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
+import { adminAuth, adminDb } from '../../../lib/firebase-admin';
 
+const SCAN_LIMIT = 3; // Free plan
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 const AI_GATEWAY_URL = process.env.AI_GATEWAY_URL || 'https://ai-gateway.vercel.sh/v1';
-const VISION_MODEL = process.env.MISTRAL_VISION_MODEL || 'mistral/pixtral-12b';
+const VISION_MODEL = process.env.MISTRAL_VISION_MODEL || 'mistral/pixtral-large';
 
 async function callPixtral(image, mimeType) {
   const apiKey = process.env.AI_GATEWAY_API_KEY;
@@ -38,7 +40,7 @@ Return ONLY a valid JSON object with these exact fields (use null if not found):
   "price": "purchase amount as numeric string like '299.99' with no currency symbol, or null",
   "retailer": "store or website name as string or null",
   "serial": "serial number or model number as string or null",
-  "category": "one of: Electronics, Appliances, Automotive, Footwear, Clothing, Tools, Furniture, Sports, Other — or null"
+  "category": "one of: Electronics, Appliances, Automotive, Footwear, Clothing, Tools, Furniture, Sports, Other or null"
 }
 
 Return ONLY the raw JSON object. No markdown fences, no explanation, no extra text.`,
@@ -55,6 +57,27 @@ Return ONLY the raw JSON object. No markdown fences, no explanation, no extra te
 
 export async function POST(request) {
   try {
+    // Verify auth token
+    const authHeader = request.headers.get('authorization') || '';
+    const idToken = authHeader.replace('Bearer ', '');
+    if (!idToken) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 });
+
+    let uid;
+    try {
+      const decoded = await adminAuth.verifyIdToken(idToken);
+      uid = decoded.uid;
+    } catch {
+      return NextResponse.json({ error: 'Unauthorised' }, { status: 401 });
+    }
+
+    // Enforce scan limit
+    const monthKey = new Date().toISOString().slice(0, 7);
+    const userSnap = await adminDb.collection('users').doc(uid).get();
+    const scanCount = userSnap.exists ? (userSnap.data()?.scanCounts?.[monthKey] || 0) : 0;
+    if (scanCount >= SCAN_LIMIT) {
+      return NextResponse.json({ error: `Monthly scan limit reached (${SCAN_LIMIT}/month). Resets next month.` }, { status: 429 });
+    }
+
     const { image, mimeType } = await request.json();
     if (!image) return NextResponse.json({ error: 'No image provided' }, { status: 400 });
 
@@ -70,9 +93,9 @@ export async function POST(request) {
       const errText = await response.text();
       console.error('AI Gateway Pixtral error:', response.status, errText);
       if (response.status === 429) {
-        return NextResponse.json({ error: 'Rate limit reached — wait a few seconds and try again.' }, { status: 429 });
+        return NextResponse.json({ error: 'Rate limit reached. Wait a few seconds and try again.' }, { status: 429 });
       }
-      return NextResponse.json({ error: 'Vision API error — check your AI Gateway key and model access.' }, { status: 502 });
+      return NextResponse.json({ error: 'Vision API error. Check your AI Gateway key and model access.' }, { status: 502 });
     }
 
     const data = await response.json();
@@ -86,7 +109,7 @@ export async function POST(request) {
     const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
       console.error('No JSON in Pixtral response:', content);
-      return NextResponse.json({ error: 'Could not read receipt — try a clearer photo.' }, { status: 422 });
+      return NextResponse.json({ error: 'Could not read receipt. Try a clearer photo.' }, { status: 422 });
     }
 
     const extracted = JSON.parse(jsonMatch[0]);

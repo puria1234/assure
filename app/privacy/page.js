@@ -6,7 +6,7 @@ export default function PrivacyPage() {
   return (
     <html>
       <head>
-        <title>Privacy Policy — Aegis</title>
+        <title>Privacy Policy | Aegis</title>
       </head>
       <body style={{ background:'#0a0a0a', color:'#fff', fontFamily:'Inter, sans-serif', margin:0 }}>
         <nav style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 48px', height:'68px', borderBottom:'1px solid #141414' }}>
@@ -27,7 +27,7 @@ export default function PrivacyPage() {
           <p style={pStyle}>Aegis ("we", "us", "our") operates the warranty tracking application and website at ae-gis.app. For any privacy-related enquiries, <a href="/support" style={{ color:'#888' }}>contact us via our support form</a>.</p>
 
           <h2 style={h2Style}>2. Information We Collect</h2>
-          <p style={pStyle}><strong style={{ color:'#bbb' }}>Account information:</strong> When you create an account, we collect your email address. If you sign in with Google, we receive only your email address and display name from Google's OAuth service. If you register with email/password, we collect your name and email. Passwords are never handled or stored by Aegis — they are managed entirely by Google's Firebase Authentication infrastructure.</p>
+          <p style={pStyle}><strong style={{ color:'#bbb' }}>Account information:</strong> When you create an account, we collect your email address. If you sign in with Google, we receive only your email address and display name from Google's OAuth service. If you register with email/password, we collect your name and email. Passwords are never handled or stored by Aegis. They are managed entirely by Google's Firebase Authentication infrastructure.</p>
           <p style={pStyle}><strong style={{ color:'#bbb' }}>Warranty data:</strong> The product names, brands, retailers, purchase dates, expiry dates, prices, serial numbers, notes, and any other information you voluntarily enter into the Service.</p>
           <p style={pStyle}><strong style={{ color:'#bbb' }}>Receipt images:</strong> If you use AI receipt scanning, the image you upload is temporarily processed to extract warranty fields. The image is stored in Vercel Blob storage during processing and is not retained after extraction is complete.</p>
           <p style={pStyle}><strong style={{ color:'#bbb' }}>Claim chat messages:</strong> When you use the AI claim assistant, your messages and the relevant warranty details (product name, brand, expiry date, retailer) are sent to an AI model to generate responses. This conversation is not retained by Aegis beyond your active session unless you choose to save it.</p>
@@ -50,14 +50,14 @@ export default function PrivacyPage() {
           <h2 style={h2Style}>4. Legal Basis for Processing (UK/EEA Users)</h2>
           <p style={pStyle}>Where applicable data protection law requires a legal basis for processing, we rely on the following:</p>
           <ul style={{ paddingLeft:'24px', marginBottom:'16px' }}>
-            <li style={liStyle}><strong style={{ color:'#bbb' }}>Contract performance</strong> — to provide the Service you have signed up for;</li>
-            <li style={liStyle}><strong style={{ color:'#bbb' }}>Legitimate interests</strong> — to maintain security, prevent fraud, and improve service reliability;</li>
-            <li style={liStyle}><strong style={{ color:'#bbb' }}>Consent</strong> — for optional features such as expiry notifications, which you can withdraw at any time;</li>
-            <li style={liStyle}><strong style={{ color:'#bbb' }}>Legal obligation</strong> — where required by law.</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Contract performance:</strong> to provide the Service you have signed up for;</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Legitimate interests:</strong> to maintain security, prevent fraud, and improve service reliability;</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Consent:</strong> for optional features such as expiry notifications, which you can withdraw at any time;</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Legal obligation:</strong> where required by law.</li>
           </ul>
 
           <h2 style={h2Style}>5. Data Storage and Security</h2>
-          <p style={pStyle}>Your warranty data is stored in Google Firestore, a Google-operated cloud database. All data is encrypted in transit using TLS and encrypted at rest using AES-256. Access is governed by strict Firebase Security Rules — only your authenticated account can read or write your records. Receipt images are stored temporarily in Vercel Blob storage, which provides server-side encryption at rest.</p>
+          <p style={pStyle}>Your warranty data is stored in Google Firestore, a Google-operated cloud database. All data is encrypted in transit using TLS and encrypted at rest using AES-256. Access is governed by strict Firebase Security Rules. Only your authenticated account can read or write your records. Receipt images are stored temporarily in Vercel Blob storage, which provides server-side encryption at rest.</p>
           <p style={pStyle}>Authentication tokens are short-lived (1-hour validity), cryptographically signed by Google's identity infrastructure, and automatically rotated. Aegis servers verify these tokens on every request. We never have access to your raw password at any point.</p>
           <p style={pStyle}>While we implement industry-standard security measures, no method of internet transmission or electronic storage is 100% secure. We cannot guarantee absolute security.</p>
 
@@ -67,9 +67,9 @@ export default function PrivacyPage() {
           <h2 style={h2Style}>7. Third-Party Services</h2>
           <p style={pStyle}>Aegis relies on the following third-party sub-processors:</p>
           <ul style={{ paddingLeft:'24px', marginBottom:'16px' }}>
-            <li style={liStyle}><strong style={{ color:'#bbb' }}>Google Firebase</strong> — authentication and Firestore database (Google LLC, USA)</li>
-            <li style={liStyle}><strong style={{ color:'#bbb' }}>Vercel</strong> — hosting, Blob storage, and AI Gateway (Vercel Inc., USA)</li>
-            <li style={liStyle}><strong style={{ color:'#bbb' }}>Paddle</strong> — payment processing and subscription management (Paddle.com Market Limited, UK)</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Google Firebase:</strong> authentication and Firestore database (Google LLC, USA)</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Vercel:</strong> hosting, Blob storage, and AI Gateway (Vercel Inc., USA)</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Paddle:</strong> payment processing and subscription management (Paddle.com Market Limited, UK)</li>
           </ul>
           <p style={pStyle}>Each sub-processor is subject to contractual data processing agreements. Data transfers to the USA are covered by appropriate transfer mechanisms (Standard Contractual Clauses where applicable).</p>
 
@@ -82,13 +82,13 @@ export default function PrivacyPage() {
           <h2 style={h2Style}>10. Your Rights</h2>
           <p style={pStyle}>Depending on your jurisdiction, you may have the following rights regarding your personal data:</p>
           <ul style={{ paddingLeft:'24px', marginBottom:'16px' }}>
-            <li style={liStyle}><strong style={{ color:'#bbb' }}>Access</strong> — request a copy of the personal data we hold about you;</li>
-            <li style={liStyle}><strong style={{ color:'#bbb' }}>Rectification</strong> — correct inaccurate data;</li>
-            <li style={liStyle}><strong style={{ color:'#bbb' }}>Erasure</strong> — request deletion of your data ("right to be forgotten");</li>
-            <li style={liStyle}><strong style={{ color:'#bbb' }}>Restriction</strong> — request that we limit processing in certain circumstances;</li>
-            <li style={liStyle}><strong style={{ color:'#bbb' }}>Portability</strong> — receive your data in a machine-readable format;</li>
-            <li style={liStyle}><strong style={{ color:'#bbb' }}>Objection</strong> — object to processing based on legitimate interests;</li>
-            <li style={liStyle}><strong style={{ color:'#bbb' }}>Withdraw consent</strong> — at any time for processing based on consent.</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Access:</strong> request a copy of the personal data we hold about you;</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Rectification:</strong> correct inaccurate data;</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Erasure:</strong> request deletion of your data ("right to be forgotten");</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Restriction:</strong> request that we limit processing in certain circumstances;</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Portability:</strong> receive your data in a machine-readable format;</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Objection:</strong> object to processing based on legitimate interests;</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Withdraw consent:</strong> at any time for processing based on consent.</li>
           </ul>
           <p style={pStyle}>To exercise any of these rights, <a href="/support" style={{ color:'#888' }}>submit a support request</a>. We will respond within 30 days. You also have the right to lodge a complaint with your local supervisory authority (in the UK, the Information Commissioner's Office at ico.org.uk).</p>
 

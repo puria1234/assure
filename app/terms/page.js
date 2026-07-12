@@ -6,7 +6,7 @@ export default function TermsPage() {
   return (
     <html>
       <head>
-        <title>Terms of Service — Aegis</title>
+        <title>Terms of Service | Aegis</title>
       </head>
       <body style={{ background:'#0a0a0a', color:'#fff', fontFamily:'Inter, sans-serif', margin:0 }}>
         <nav style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 48px', height:'68px', borderBottom:'1px solid #141414' }}>
@@ -52,8 +52,8 @@ export default function TermsPage() {
           </ul>
           <p style={pStyle}>We reserve the right to suspend or terminate your account immediately and without notice for any violation of this section.</p>
 
-          <h2 style={h2Style}>6. AI Features — Disclaimer and Limitations</h2>
-          <p style={pStyle}>Aegis provides AI-powered receipt scanning and a warranty claim assistant (collectively, "AI Features"). These features are provided as convenience tools to assist you in organising and understanding your warranty coverage. AI-generated outputs — including but not limited to extracted receipt data, claim letters, and suggested next steps — may contain errors, inaccuracies, or omissions. You acknowledge and agree that:</p>
+          <h2 style={h2Style}>6. AI Features: Disclaimer and Limitations</h2>
+          <p style={pStyle}>Aegis provides AI-powered receipt scanning and a warranty claim assistant (collectively, "AI Features"). These features are provided as convenience tools to assist you in organising and understanding your warranty coverage. AI-generated outputs (including extracted receipt data, claim letters, and suggested next steps) may contain errors, inaccuracies, or omissions. You acknowledge and agree that:</p>
           <ul style={{ paddingLeft:'24px', marginBottom:'16px' }}>
             <li style={liStyle}>AI outputs do not constitute legal, financial, or professional advice of any kind;</li>
             <li style={liStyle}>You are solely responsible for verifying the accuracy of all AI-generated information before relying on it or sharing it with third parties;</li>

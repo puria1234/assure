@@ -134,7 +134,7 @@ export default function LandingPage() {
         <div className="nav-links hide-sm" style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
           <a href="#features" className="nav-link" style={{ fontSize: '11px', fontWeight: '600', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#888', textDecoration: 'none', transition: 'color 0.2s' }} onMouseOver={e => e.target.style.color = '#fff'} onMouseOut={e => e.target.style.color = '#888'}>Features</a>
           <a href="#how-it-works" className="nav-link" style={{ fontSize: '11px', fontWeight: '600', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#888', textDecoration: 'none', transition: 'color 0.2s' }} onMouseOver={e => e.target.style.color = '#fff'} onMouseOut={e => e.target.style.color = '#888'}>How It Works</a>
-          <a href="/pricing" className="nav-link" style={{ fontSize: '11px', fontWeight: '600', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#888', textDecoration: 'none', transition: 'color 0.2s' }} onMouseOver={e => e.target.style.color = '#fff'} onMouseOut={e => e.target.style.color = '#888'}>Pricing</a>
+          <a href="#pricing" className="nav-link" style={{ fontSize: '11px', fontWeight: '600', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#888', textDecoration: 'none', transition: 'color 0.2s' }} onMouseOver={e => e.target.style.color = '#fff'} onMouseOut={e => e.target.style.color = '#888'}>Pricing</a>
           <a href={user ? "/app" : "/login"} className="btn-cta" style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#fff', color: '#000', padding: '10px 20px', borderRadius: '6px', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.06em', textDecoration: 'none', transition: 'all 0.2s' }}>
             {user ? "Go to Dashboard" : "Open App"}
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -749,6 +749,66 @@ export default function LandingPage() {
               <div className="feature-icon">{item.icon}</div>
               <div className="feature-title">{item.title}</div>
               <div className="feature-desc">{item.desc}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* PRICING */}
+      <section id="pricing" className="reveal">
+        <div className="eyebrow" style={{ marginBottom:'20px' }}>Pricing</div>
+        <div style={{ display:'flex', alignItems:'flex-end', justifyContent:'space-between', flexWrap:'wrap', gap:'16px', marginBottom:'48px' }}>
+          <h2 className="headline-lg">Simple, honest<br/>pricing.</h2>
+          <div style={{ display:'inline-flex', alignItems:'center', gap:'8px', border:'1px solid #2a2a2a', borderRadius:'100px', padding:'6px 16px 6px 10px', background:'rgba(255,255,255,0.03)' }}>
+            <span style={{ width:'6px', height:'6px', borderRadius:'50%', background:'#f59e0b', boxShadow:'0 0 8px #f59e0b', display:'inline-block' }} />
+            <span style={{ fontSize:'11px', fontWeight:'700', letterSpacing:'0.15em', textTransform:'uppercase', color:'#888' }}>Paid plans coming soon</span>
+          </div>
+        </div>
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(240px, 1fr))', gap:'16px', maxWidth:'900px' }}>
+          {[
+            {
+              key:'free', name:'Free', price:'$0', sub:'Free forever', cta:'Get started', href:'/login', ctaStyle:{ background:'#fff', color:'#000', border:'none' }, highlighted:false, current:true,
+              features:['Up to 5 warranties','3 AI receipt scans / month','1 claim session / month','Expiry countdown and alerts'],
+            },
+            {
+              key:'protect', name:'Protect', price:'$3.99', sub:'per month', cta:'Coming soon', href:null, ctaStyle:{ background:'#1a1a1a', color:'#444', border:'1px solid #2a2a2a' }, highlighted:false,
+              features:['Up to 30 warranties','20 AI receipt scans / month','10 claim sessions / month','Expiry alerts (30 day)','Coverage progress tracking'],
+            },
+            {
+              key:'protectPlus', name:'Protect+', price:'$6.99', sub:'per month', cta:'Coming soon', href:null, ctaStyle:{ background:'#f0f0f0', color:'#999', border:'none' }, highlighted:true,
+              features:['Unlimited warranties','Unlimited AI receipt scans','Unlimited claim sessions','Priority support','Family sharing (up to 5)'],
+            },
+          ].map((plan) => (
+            <div key={plan.key} style={{ background: plan.highlighted ? '#fff' : '#0f0f0f', border:`1px solid ${plan.highlighted ? 'transparent' : '#1a1a1a'}`, borderRadius:'24px', padding:'32px', position:'relative' }}>
+              {plan.current && (
+                <div style={{ position:'absolute', top:'-13px', left:'50%', transform:'translateX(-50%)', background:'#4ade80', color:'#000', fontSize:'10px', fontWeight:'700', letterSpacing:'0.12em', textTransform:'uppercase', padding:'4px 14px', borderRadius:'100px', whiteSpace:'nowrap' }}>
+                  Your current plan
+                </div>
+              )}
+              <div style={{ fontSize:'12px', fontWeight:'700', letterSpacing:'0.12em', textTransform:'uppercase', color: plan.highlighted ? '#888' : '#555', marginBottom:'10px' }}>{plan.name}</div>
+              <div style={{ display:'flex', alignItems:'baseline', gap:'4px', marginBottom:'4px' }}>
+                <span style={{ fontSize:'42px', fontWeight:'900', letterSpacing:'-0.04em', color: plan.highlighted ? '#000' : '#fff', lineHeight:1 }}>{plan.price}</span>
+                {plan.key !== 'free' && <span style={{ fontSize:'13px', color: plan.highlighted ? '#888' : '#555' }}>/ mo</span>}
+              </div>
+              <div style={{ fontSize:'12px', color: plan.highlighted ? '#999' : '#444', marginBottom:'24px' }}>{plan.sub}</div>
+              {plan.href ? (
+                <a href={plan.href} style={{ display:'block', textAlign:'center', borderRadius:'100px', padding:'12px 24px', fontSize:'12px', fontWeight:'800', letterSpacing:'0.08em', textTransform:'uppercase', textDecoration:'none', marginBottom:'24px', ...plan.ctaStyle }}>
+                  {plan.cta}
+                </a>
+              ) : (
+                <div style={{ textAlign:'center', borderRadius:'100px', padding:'12px 24px', fontSize:'12px', fontWeight:'800', letterSpacing:'0.08em', textTransform:'uppercase', marginBottom:'24px', cursor:'default', ...plan.ctaStyle }}>
+                  {plan.cta}
+                </div>
+              )}
+              <div style={{ borderTop:`1px solid ${plan.highlighted ? '#e8e8e8' : '#1a1a1a'}`, marginBottom:'20px' }} />
+              <div style={{ display:'flex', flexDirection:'column', gap:'10px' }}>
+                {plan.features.map((f) => (
+                  <div key={f} style={{ display:'flex', alignItems:'flex-start', gap:'8px' }}>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={plan.highlighted ? '#000' : (plan.key === 'free' ? '#4ade80' : '#555')} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink:0, marginTop:'2px' }}><polyline points="20 6 9 17 4 12"/></svg>
+                    <span style={{ fontSize:'13px', color: plan.highlighted ? '#444' : (plan.key === 'free' ? '#bbb' : '#555'), lineHeight:'1.4' }}>{f}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           ))}
         </div>

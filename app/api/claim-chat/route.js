@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
+import { adminAuth, adminDb } from '../../../lib/firebase-admin';
 
+const CLAIM_LIMIT = 1; // Free plan — messages per month
 const AI_GATEWAY_URL = process.env.AI_GATEWAY_URL || 'https://ai-gateway.vercel.sh/v1';
 const CLAIM_MODEL = process.env.MISTRAL_CHAT_MODEL || 'mistral/devstral-2';
 
@@ -24,6 +26,27 @@ function stripMarkdown(text) {
 
 export async function POST(request) {
   try {
+    // Verify auth token
+    const authHeader = request.headers.get('authorization') || '';
+    const idToken = authHeader.replace('Bearer ', '');
+    if (!idToken) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 });
+
+    let uid;
+    try {
+      const decoded = await adminAuth.verifyIdToken(idToken);
+      uid = decoded.uid;
+    } catch {
+      return NextResponse.json({ error: 'Unauthorised' }, { status: 401 });
+    }
+
+    // Enforce claim limit
+    const monthKey = new Date().toISOString().slice(0, 7);
+    const userSnap = await adminDb.collection('users').doc(uid).get();
+    const claimCount = userSnap.exists ? (userSnap.data()?.claimCounts?.[monthKey] || 0) : 0;
+    if (claimCount >= CLAIM_LIMIT) {
+      return NextResponse.json({ error: `Monthly claim limit reached (${CLAIM_LIMIT}/month). Resets next month.` }, { status: 429 });
+    }
+
     const { messages, warrantyContext } = await request.json();
 
     const {
@@ -86,9 +109,9 @@ INSTRUCTIONS:
       const errText = await response.text();
       console.error('AI Gateway claim-chat error:', response.status, errText);
       if (response.status === 429) {
-        return NextResponse.json({ error: 'Rate limit reached — wait a few seconds and try again.' }, { status: 429 });
+        return NextResponse.json({ error: 'Rate limit reached. Wait a few seconds and try again.' }, { status: 429 });
       }
-      return NextResponse.json({ error: 'AI service unavailable — check your AI Gateway key and model access.' }, { status: 502 });
+      return NextResponse.json({ error: 'AI service unavailable. Check your AI Gateway key and model access.' }, { status: 502 });
     }
 
     const data = await response.json();

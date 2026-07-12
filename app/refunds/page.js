@@ -5,7 +5,7 @@ export default function RefundsPage() {
   return (
     <html>
       <head>
-        <title>Refund Policy — Aegis</title>
+        <title>Refund Policy | Aegis</title>
       </head>
       <body style={{ background:'#0a0a0a', color:'#fff', fontFamily:'Inter, sans-serif', margin:0 }}>
         <nav style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 48px', height:'68px', borderBottom:'1px solid #141414' }}>
@@ -29,7 +29,7 @@ export default function RefundsPage() {
           <p style={pStyle}>If you are unsatisfied with Aegis for any reason within the first 7 days following your initial paid charge (i.e. after the free trial ends), you may request a full refund of that charge. To request a refund under this guarantee, <a href="/support" style={{ color:'#888' }}>submit a support request</a> from the email address associated with your account within 7 days of the charge. Refund requests received after 7 days of the relevant charge are not eligible under this guarantee.</p>
 
           <h2 style={h2Style}>4. Cancellation</h2>
-          <p style={pStyle}>You may cancel your Aegis subscription at any time. Cancellation takes effect at the end of your current billing period — you will retain full access to all paid features until that date. We do not issue prorated refunds for the unused portion of a billing period after the 7-day money-back window has passed. To cancel, manage your subscription from within the Aegis app or <a href="/support" style={{ color:'#888' }}>submit a support request</a>.</p>
+          <p style={pStyle}>You may cancel your Aegis subscription at any time. Cancellation takes effect at the end of your current billing period. You will retain full access to all paid features until that date. We do not issue prorated refunds for the unused portion of a billing period after the 7-day money-back window has passed. To cancel, manage your subscription from within the Aegis app or <a href="/support" style={{ color:'#888' }}>submit a support request</a>.</p>
 
           <h2 style={h2Style}>5. Exceptions and Discretionary Refunds</h2>
           <p style={pStyle}>Outside the 7-day guarantee window, refunds are issued at our sole discretion. We may consider refunds in cases of significant service outages, billing errors on our end, duplicate charges, or other exceptional circumstances. <a href="/support" style={{ color:'#888' }}>Submit a support request</a> with your account email and a description of the issue; we will review and respond within 5 business days.</p>

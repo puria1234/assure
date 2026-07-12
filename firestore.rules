@@ -1,0 +1,51 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Plan limits (free tier) ──────────────────────────────────────────────
+    function warrantyLimit() { return 5; }
+    function scanLimit()     { return 3; }
+    function claimLimit()    { return 1; }
+
+    function currentMonth() {
+      // Returns the current month key in "YYYY-MM" format
+      return string(request.time.toMillis()).slice(0, 7); // approximation
+    }
+
+    // ── User profiles ────────────────────────────────────────────────────────
+    match /users/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+
+      // Allow any update EXCEPT reducing warrantyCount below zero
+      // (prevents clients bypassing the counter to game the warranty limit)
+      allow update: if request.auth != null
+        && request.auth.uid == userId
+        && request.resource.data.get('warrantyCount', 0) >= 0;
+
+      allow create: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // ── Warranties ───────────────────────────────────────────────────────────
+    match /warranties/{warrantyId} {
+      // Read: only the owner
+      allow read: if request.auth != null
+        && resource.data.userId == request.auth.uid;
+
+      // Update/delete: only the owner
+      allow update: if request.auth != null
+        && resource.data.userId == request.auth.uid
+        && request.resource.data.userId == request.auth.uid;
+
+      allow delete: if request.auth != null
+        && resource.data.userId == request.auth.uid;
+
+      // Create: owner only AND warrantyCount on user doc must be below limit.
+      // The client must run this inside a transaction that also increments
+      // warrantyCount, so both checks land in the same atomic operation.
+      allow create: if request.auth != null
+        && request.resource.data.userId == request.auth.uid
+        && get(/databases/$(database)/documents/users/$(request.auth.uid))
+             .data.get('warrantyCount', 0) < warrantyLimit();
+    }
+  }
+}

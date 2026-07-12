@@ -8,7 +8,7 @@ export default function SupportPage() {
   return (
     <html>
       <head>
-        <title>Support — Aegis</title>
+        <title>Support | Aegis</title>
         <style>{`
           * { box-sizing: border-box; margin: 0; padding: 0; }
           body { background: #0a0a0a; color: #fff; font-family: Inter, sans-serif; }
@@ -27,7 +27,7 @@ export default function SupportPage() {
           <div style={{ fontSize:'11px', fontWeight:'700', letterSpacing:'0.18em', textTransform:'uppercase', color:'#555', marginBottom:'20px' }}>Support</div>
           <h1 style={{ fontSize:'40px', fontWeight:'900', letterSpacing:'-0.03em', marginBottom:'16px' }}>How can we help?</h1>
           <p style={{ fontSize:'16px', color:'#666', lineHeight:'1.7', marginBottom:'56px', maxWidth:'520px' }}>
-            Fill out the form below and we'll get back to you as soon as possible — typically within one business day.
+            Fill out the form below and we'll get back to you as soon as possible. We typically respond within one business day.
           </p>
 
           {/* Typeform embed */}
