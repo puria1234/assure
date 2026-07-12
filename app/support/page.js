@@ -1,3 +1,5 @@
+'use client';
+
 // ─────────────────────────────────────────────
 // Paste your Typeform embed URL here.
 // e.g. "https://yourname.typeform.com/to/XXXXXXXX"
