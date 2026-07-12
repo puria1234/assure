@@ -30,6 +30,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [strengthScore, setStrengthScore] = useState(0);
   const [rememberMe, setRememberMe] = useState(true);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
@@ -81,6 +82,7 @@ export default function LoginPage() {
   const handleSignup = async (e) => {
     e.preventDefault();
     setError('');
+    if (!acceptedTerms) { setError('You must accept the Terms of Service and Privacy Policy to create an account.'); return; }
     if (password !== confirmPassword) { setError('Passwords do not match.'); return; }
     if (password.length < 6) { setError('Password must be at least 6 characters.'); return; }
     setLoading(true);
@@ -262,7 +264,26 @@ export default function LoginPage() {
               <label style={{ display:'block', fontSize:'11px', fontWeight:700, color:'#666', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:'8px' }}>Confirm password</label>
               <input type="password" placeholder="••••••••" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required style={inputStyle} onFocus={e => e.target.style.borderColor='#555'} onBlur={e => e.target.style.borderColor='#242424'} />
             </div>
-            <button type="submit" disabled={loading} style={{ width:'100%', background:'#fff', color:'#000', border:'none', borderRadius:'10px', padding:'14px', fontSize:'13px', fontWeight:800, letterSpacing:'0.08em', textTransform:'uppercase', cursor:loading?'not-allowed':'pointer', transition:'all 0.2s', fontFamily:'Inter, sans-serif', opacity:loading?0.6:1 }}>
+            <label style={{ display:'flex', alignItems:'flex-start', gap:'10px', marginBottom:'20px', cursor:'pointer', userSelect:'none' }}>
+              <div
+                onClick={() => setAcceptedTerms(!acceptedTerms)}
+                style={{ width:'18px', height:'18px', minWidth:'18px', border:`1px solid ${acceptedTerms ? '#fff' : '#333'}`, borderRadius:'4px', background: acceptedTerms ? '#fff' : 'transparent', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', marginTop:'1px', transition:'all 0.15s' }}
+              >
+                {acceptedTerms && (
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                )}
+              </div>
+              <span style={{ fontSize:'12px', color:'#666', lineHeight:'1.6' }}>
+                I have read and agree to the{' '}
+                <a href="/terms" target="_blank" rel="noopener noreferrer" style={{ color:'#aaa', textDecoration:'underline' }} onClick={e => e.stopPropagation()}>Terms of Service</a>
+                {' '}and{' '}
+                <a href="/privacy" target="_blank" rel="noopener noreferrer" style={{ color:'#aaa', textDecoration:'underline' }} onClick={e => e.stopPropagation()}>Privacy Policy</a>.
+                I am at least 16 years of age.
+              </span>
+            </label>
+            <button type="submit" disabled={loading || !acceptedTerms} style={{ width:'100%', background: acceptedTerms ? '#fff' : '#1a1a1a', color: acceptedTerms ? '#000' : '#444', border: acceptedTerms ? 'none' : '1px solid #2a2a2a', borderRadius:'10px', padding:'14px', fontSize:'13px', fontWeight:800, letterSpacing:'0.08em', textTransform:'uppercase', cursor:(loading || !acceptedTerms)?'not-allowed':'pointer', transition:'all 0.2s', fontFamily:'Inter, sans-serif', opacity:loading?0.6:1 }}>
               {loading ? <div style={{ display:'flex', alignItems:'center', justifyContent:'center' }}><SpinnerIcon /></div> : 'Create Account'}
             </button>
           </form>
@@ -308,6 +329,12 @@ export default function LoginPage() {
               </svg>
               Continue with Google
             </button>
+            <p style={{ fontSize:'11px', color:'#3a3a3a', textAlign:'center', marginTop:'12px', lineHeight:'1.6' }}>
+              By continuing, you agree to our{' '}
+              <a href="/terms" target="_blank" rel="noopener noreferrer" style={{ color:'#555', textDecoration:'underline' }}>Terms of Service</a>
+              {' '}and{' '}
+              <a href="/privacy" target="_blank" rel="noopener noreferrer" style={{ color:'#555', textDecoration:'underline' }}>Privacy Policy</a>.
+            </p>
           </>
         )}
         <div style={{ textAlign:'center', marginTop:'20px' }}>
