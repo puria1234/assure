@@ -80,8 +80,12 @@ export default function PrivacyPage() {
           <p style={pStyle}>We'll notify you of material changes at least 14 days before they take effect. Continued use of the Service after that constitutes acceptance of the updated policy.</p>
 
         </main>
-        <footer style={{ textAlign:'center', padding:'40px 24px', borderTop:'1px solid #141414', fontSize:'12px', color:'#333' }}>
-          © 2026 Aegis. All rights reserved. · <a href="/terms" style={{ color:'#444', textDecoration:'none' }}>Terms</a> · <a href="/refunds" style={{ color:'#444', textDecoration:'none' }}>Refunds</a>
+        <footer>
+          <div className="footer-text">© 2026 Aegis. All rights reserved.</div>
+          <div style={{ display:'flex', gap:'24px' }}>
+            <a href="/privacy" style={{ fontSize:'13px', color:'#444', textDecoration:'none' }}>Privacy</a>
+            <a href="/terms" style={{ fontSize:'13px', color:'#444', textDecoration:'none' }}>Terms</a>
+          </div>
         </footer>
       </body>
     </html>
