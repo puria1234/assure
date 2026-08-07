@@ -103,7 +103,6 @@ export default function PricingPage() {
         <div style={{ display: 'flex', gap: '24px' }}>
           <a href="/privacy" style={{ fontSize: '13px', color: '#444', textDecoration: 'none' }}>Privacy</a>
           <a href="/terms" style={{ fontSize: '13px', color: '#444', textDecoration: 'none' }}>Terms</a>
-          <a href="/refunds" style={{ fontSize: '13px', color: '#444', textDecoration: 'none' }}>Refunds</a>
         </div>
       </footer>
     </div>

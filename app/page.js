@@ -871,9 +871,6 @@ export default function LandingPage() {
             <a href="/privacy" style={{ fontSize:'12px', color:'#444', textDecoration:'none', transition:'color 0.15s' }}
               onMouseOver={(e) => e.currentTarget.style.color = '#888'}
               onMouseOut={(e) => e.currentTarget.style.color = '#444'}>Privacy Policy</a>
-            <a href="/refunds" style={{ fontSize:'12px', color:'#444', textDecoration:'none', transition:'color 0.15s' }}
-              onMouseOver={(e) => e.currentTarget.style.color = '#888'}
-              onMouseOut={(e) => e.currentTarget.style.color = '#444'}>Refund Policy</a>
           </div>
         </div>
       </footer>
