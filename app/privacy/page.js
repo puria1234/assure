@@ -18,48 +18,57 @@ export default function PrivacyPage() {
         </nav>
         <main style={{ maxWidth:'760px', margin:'0 auto', padding:'80px 24px' }}>
           <h1 style={{ fontSize:'40px', fontWeight:'900', letterSpacing:'-0.03em', marginBottom:'8px' }}>Privacy Policy</h1>
-          <div style={{ fontSize:'14px', color:'#555', marginBottom:'48px' }}>Last updated: July 2026</div>
+          <div style={{ fontSize:'14px', color:'#555', marginBottom:'48px' }}>Last updated: 8/7/2026</div>
 
-          <h2 style={h2Style}>1. Who We Are</h2>
-          <p style={pStyle}>Aegis ("we", "us", "our") runs the warranty tracking app and website at ae-gis.app.</p>
+          <h2 style={h2Style}>1. Information We Collect</h2>
+          <p style={pStyle}>We collect information you provide directly to us, including:</p>
+          <ul style={{ paddingLeft:'24px', marginBottom:'16px' }}>
+            <li style={liStyle}>Name and email address</li>
+            <li style={liStyle}>Warranty details you enter, like product names, brands, retailers, dates, prices, and serial numbers</li>
+            <li style={liStyle}>Receipt images, when you use AI scanning</li>
+            <li style={liStyle}>Claim chat messages, when you use the AI claim assistant</li>
+            <li style={liStyle}>Payment and subscription details, handled by Paddle</li>
+          </ul>
 
-          <h2 style={h2Style}>2. Information We Collect</h2>
-          <p style={pStyle}><strong style={{ color:'#bbb' }}>Account info:</strong> your email, plus your name if you sign up directly. Google sign in only hands us your email and display name, and your password never touches our servers since Firebase Authentication handles that entirely.</p>
-          <p style={pStyle}><strong style={{ color:'#bbb' }}>Warranty data:</strong> whatever you enter, like product names, brands, retailers, dates, prices, serial numbers, and notes.</p>
-          <p style={pStyle}><strong style={{ color:'#bbb' }}>Receipt images:</strong> briefly processed for AI scanning, then deleted once we've pulled out the details.</p>
-          <p style={pStyle}><strong style={{ color:'#bbb' }}>Claim chat messages:</strong> sent to an AI model along with the relevant warranty details so it can help you. We don't keep the conversation after your session unless you save it.</p>
-          <p style={pStyle}><strong style={{ color:'#bbb' }}>Payment info:</strong> we never see your card details, since Paddle handles that. We just get transaction metadata like plan type and billing dates.</p>
-          <p style={pStyle}><strong style={{ color:'#bbb' }}>Usage data:</strong> the basics needed to keep things running, like auth tokens and session IDs. No third party analytics or ad trackers.</p>
+          <h2 style={h2Style}>2. How We Use Your Information</h2>
+          <p style={pStyle}>We use the information we collect to:</p>
+          <ul style={{ paddingLeft:'24px', marginBottom:'16px' }}>
+            <li style={liStyle}>Create and run your account</li>
+            <li style={liStyle}>Store and display your warranty records</li>
+            <li style={liStyle}>Send expiry alerts, if you've turned them on</li>
+            <li style={liStyle}>Power AI receipt scanning and the claim assistant</li>
+            <li style={liStyle}>Manage your subscription and billing</li>
+            <li style={liStyle}>Improve and maintain our service</li>
+          </ul>
 
-          <h2 style={h2Style}>3. How We Use Your Information</h2>
-          <p style={pStyle}>We use it to run your account, show you your warranty records, send expiry alerts if you've turned them on, power the AI features, handle billing through Paddle, and meet our legal obligations. That's it. No advertising, no profiling, and we never sell or rent your data.</p>
+          <h2 style={h2Style}>3. Information Sharing</h2>
+          <p style={pStyle}>We do not sell your personal information. Your data is only used to provide the service to you and is never shared with other users or third parties, aside from the providers listed below who help us run Aegis.</p>
 
-          <h2 style={h2Style}>4. Legal Basis for Processing</h2>
-          <p style={pStyle}>Where data protection law requires a stated basis, we rely on contract performance (delivering the Service), legitimate interests (security and reliability), consent (optional features), and legal obligation where it applies.</p>
+          <h2 style={h2Style}>4. Data Security</h2>
+          <p style={pStyle}>We take the security of your data seriously and implement industry standard security measures:</p>
+          <ul style={{ paddingLeft:'24px', marginBottom:'16px' }}>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Encryption in transit (TLS):</strong> all data sent between your device and our servers is encrypted using Transport Layer Security</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Encryption at rest (AES 256):</strong> all data stored in our database is encrypted using AES 256 encryption</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Secure infrastructure:</strong> we use Google Firestore and Vercel, both enterprise grade platforms with built in security features</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Access controls:</strong> your data is isolated and protected so only your own authenticated account can read or write it</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Short lived tokens:</strong> authentication tokens rotate automatically, and we never see your raw password</li>
+          </ul>
+          <p style={pStyle}>While we implement robust security measures, no method of transmission over the internet or electronic storage is 100% secure. We continuously monitor and update our security practices.</p>
 
-          <h2 style={h2Style}>5. Data Storage and Security</h2>
-          <p style={pStyle}>Your data lives in Google Firestore, encrypted in transit and at rest, with access rules that only let your own account read or write your records. Auth tokens are short lived and rotate automatically, and we never see your raw password.</p>
-          <p style={pStyle}>No system is 100% secure, so while we take security seriously, we can't promise it's bulletproof.</p>
+          <h2 style={h2Style}>5. Your Rights</h2>
+          <p style={pStyle}>You have the right to:</p>
+          <ul style={{ paddingLeft:'24px', marginBottom:'16px' }}>
+            <li style={liStyle}>Access your personal data</li>
+            <li style={liStyle}>Update or correct your information</li>
+            <li style={liStyle}>Delete your account and associated data</li>
+            <li style={liStyle}>Export your data</li>
+            <li style={liStyle}>Opt out of notifications</li>
+          </ul>
 
-          <h2 style={h2Style}>6. AI Features and Data Processing</h2>
-          <p style={pStyle}>AI receipt scanning and the claim assistant run through Vercel's AI Gateway. Only what's needed to process your request gets sent to the AI provider, it isn't kept afterward, and it's never used to train anything.</p>
-
-          <h2 style={h2Style}>7. Third Party Services</h2>
-          <p style={pStyle}>We rely on a handful of providers to run Aegis: Google Firebase for authentication and our database, Vercel for hosting, storage, and the AI Gateway, and Paddle for payments and subscriptions. Each is bound by an agreement covering how they handle your data.</p>
-
-          <h2 style={h2Style}>8. Cookies and Local Storage</h2>
-          <p style={pStyle}>We use local storage just to keep you signed in between visits. No advertising cookies, tracking pixels, or analytics scripts.</p>
-
-          <h2 style={h2Style}>9. Data Retention</h2>
-          <p style={pStyle}>We keep your data while your account is active. Delete your account and we delete your personal data within 30 days, except where the law requires us to hold onto something longer; receipt images get deleted right after processing either way.</p>
-
-          <h2 style={h2Style}>10. Your Rights</h2>
-          <p style={pStyle}>You can ask to access, correct, delete, or export your data, or object to or withdraw consent for how we use it. We'll respond within 30 days, and you can always reach out to your local privacy regulator if you're not satisfied.</p>
-
-          <h2 style={h2Style}>11. Children's Privacy</h2>
+          <h2 style={h2Style}>6. Children's Privacy</h2>
           <p style={pStyle}>Aegis isn't meant for anyone under 16, and we don't knowingly collect their data. If we find out we have, we'll delete it right away.</p>
 
-          <h2 style={h2Style}>12. Changes to This Policy</h2>
+          <h2 style={h2Style}>7. Changes to This Policy</h2>
           <p style={pStyle}>We'll give you at least 14 days' notice before any material change takes effect. Using Aegis after that means you're on board with the update.</p>
 
         </main>
