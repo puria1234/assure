@@ -26,16 +26,16 @@ export default function RefundsPage() {
           <p style={pStyle}>After the free trial period, your chosen plan is billed on a monthly recurring basis. Billing occurs on the same calendar day each month (the "billing date"). You authorise Aegis to charge your payment method on file through our payment processor, Paddle, on each billing date until you cancel.</p>
 
           <h2 style={h2Style}>3. 7-Day Money-Back Guarantee</h2>
-          <p style={pStyle}>If you are unsatisfied with Aegis for any reason within the first 7 days following your initial paid charge (i.e. after the free trial ends), you may request a full refund of that charge. To request a refund under this guarantee, <a href="/support" style={{ color:'#888' }}>submit a support request</a> from the email address associated with your account within 7 days of the charge. Refund requests received after 7 days of the relevant charge are not eligible under this guarantee.</p>
+          <p style={pStyle}>If you are unsatisfied with Aegis for any reason within the first 7 days following your initial paid charge (i.e. after the free trial ends), you may request a full refund of that charge from the email address associated with your account within 7 days of the charge. Refund requests received after 7 days of the relevant charge are not eligible under this guarantee.</p>
 
           <h2 style={h2Style}>4. Cancellation</h2>
-          <p style={pStyle}>You may cancel your Aegis subscription at any time. Cancellation takes effect at the end of your current billing period. You will retain full access to all paid features until that date. We do not issue prorated refunds for the unused portion of a billing period after the 7-day money-back window has passed. To cancel, manage your subscription from within the Aegis app or <a href="/support" style={{ color:'#888' }}>submit a support request</a>.</p>
+          <p style={pStyle}>You may cancel your Aegis subscription at any time. Cancellation takes effect at the end of your current billing period. You will retain full access to all paid features until that date. We do not issue prorated refunds for the unused portion of a billing period after the 7-day money-back window has passed. To cancel, manage your subscription from within the Aegis app.</p>
 
           <h2 style={h2Style}>5. Exceptions and Discretionary Refunds</h2>
-          <p style={pStyle}>Outside the 7-day guarantee window, refunds are issued at our sole discretion. We may consider refunds in cases of significant service outages, billing errors on our end, duplicate charges, or other exceptional circumstances. <a href="/support" style={{ color:'#888' }}>Submit a support request</a> with your account email and a description of the issue; we will review and respond within 5 business days.</p>
+          <p style={pStyle}>Outside the 7-day guarantee window, refunds are issued at our sole discretion. We may consider refunds in cases of significant service outages, billing errors on our end, duplicate charges, or other exceptional circumstances.</p>
 
           <h2 style={h2Style}>6. Fraudulent or Disputed Charges</h2>
-          <p style={pStyle}>If you believe a charge was made in error or without your authorisation, <a href="/support" style={{ color:'#888' }}>contact us</a> before initiating a chargeback with your bank. We will work to resolve the issue promptly. Initiating an unjustified chargeback may result in suspension of your account.</p>
+          <p style={pStyle}>If you believe a charge was made in error or without your authorisation, contact us before initiating a chargeback with your bank. We will work to resolve the issue promptly. Initiating an unjustified chargeback may result in suspension of your account.</p>
 
           <h2 style={h2Style}>7. Refund Processing</h2>
           <p style={pStyle}>Approved refunds are processed through Paddle, our payment processor, and typically appear on your original payment method within 5–10 business days, depending on your bank or card issuer. We do not issue refunds in the form of account credit.</p>
@@ -43,8 +43,6 @@ export default function RefundsPage() {
           <h2 style={h2Style}>8. Changes to This Policy</h2>
           <p style={pStyle}>We reserve the right to modify this Refund Policy at any time. Changes will be posted on this page with an updated date. Continued use of Aegis following any change constitutes your acceptance of the revised policy.</p>
 
-          <h2 style={h2Style}>9. Contact</h2>
-          <p style={pStyle}>For all refund or billing enquiries, <a href="/support" style={{ color:'#888' }}>submit a support request</a>. Please include your account email and the date of the charge in question.</p>
         </main>
         <footer style={{ textAlign:'center', padding:'40px 24px', borderTop:'1px solid #141414', fontSize:'12px', color:'#333' }}>
           © 2026 Aegis. All rights reserved. · <a href="/terms" style={{ color:'#444', textDecoration:'none' }}>Terms</a> · <a href="/privacy" style={{ color:'#444', textDecoration:'none' }}>Privacy</a>
