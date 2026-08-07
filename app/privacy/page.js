@@ -24,7 +24,7 @@ export default function PrivacyPage() {
           </div>
 
           <h2 style={h2Style}>1. Who We Are</h2>
-          <p style={pStyle}>Aegis ("we", "us", "our") operates the warranty tracking application and website at ae-gis.app. For any privacy-related enquiries, <a href="/support" style={{ color:'#888' }}>contact us via our support form</a>.</p>
+          <p style={pStyle}>Aegis ("we", "us", "our") operates the warranty tracking application and website at ae-gis.app.</p>
 
           <h2 style={h2Style}>2. Information We Collect</h2>
           <p style={pStyle}><strong style={{ color:'#bbb' }}>Account information:</strong> When you create an account, we collect your email address. If you sign in with Google, we receive only your email address and display name from Google's OAuth service. If you register with email/password, we collect your name and email. Passwords are never handled or stored by Aegis. They are managed entirely by Google's Firebase Authentication infrastructure.</p>
@@ -42,7 +42,6 @@ export default function PrivacyPage() {
             <li style={liStyle}>Send expiry alert notifications (only if you enable this feature);</li>
             <li style={liStyle}>Process AI receipt scanning and claim assistant requests;</li>
             <li style={liStyle}>Manage your subscription and billing through Paddle;</li>
-            <li style={liStyle}>Respond to support requests you submit;</li>
             <li style={liStyle}>Comply with our legal obligations.</li>
           </ul>
           <p style={pStyle}>We do not use your data for advertising, behavioural profiling, or to train AI models. We do not sell, rent, or trade your personal information to any third party for any purpose.</p>
@@ -90,16 +89,14 @@ export default function PrivacyPage() {
             <li style={liStyle}><strong style={{ color:'#bbb' }}>Objection:</strong> object to processing based on legitimate interests;</li>
             <li style={liStyle}><strong style={{ color:'#bbb' }}>Withdraw consent:</strong> at any time for processing based on consent.</li>
           </ul>
-          <p style={pStyle}>To exercise any of these rights, <a href="/support" style={{ color:'#888' }}>submit a support request</a>. We will respond within 30 days. You also have the right to lodge a complaint with your local supervisory authority (in the UK, the Information Commissioner's Office at ico.org.uk).</p>
+          <p style={pStyle}>We will respond within 30 days. You also have the right to lodge a complaint with your local supervisory authority (in the UK, the Information Commissioner's Office at ico.org.uk).</p>
 
           <h2 style={h2Style}>11. Children's Privacy</h2>
-          <p style={pStyle}>Aegis is not directed at children under the age of 16. We do not knowingly collect personal information from children under 16. If we become aware that a child under 16 has provided personal information, we will delete it promptly. If you believe a child under 16 has created an account, <a href="/support" style={{ color:'#888' }}>contact us via our support form</a>.</p>
+          <p style={pStyle}>Aegis is not directed at children under the age of 16. We do not knowingly collect personal information from children under 16. If we become aware that a child under 16 has provided personal information, we will delete it promptly.</p>
 
           <h2 style={h2Style}>12. Changes to This Policy</h2>
           <p style={pStyle}>We may update this Privacy Policy periodically. If we make material changes, we will notify you by email or via a notice within the Service at least 14 days before the changes take effect. The date at the top of this page reflects the most recent revision. Your continued use of the Service after changes take effect constitutes your acceptance of the updated Policy.</p>
 
-          <h2 style={h2Style}>13. Contact</h2>
-          <p style={pStyle}>For all privacy-related questions or requests, <a href="/support" style={{ color:'#888' }}>contact us via our support form</a>. We aim to respond to all enquiries within 5 business days.</p>
         </main>
         <footer style={{ textAlign:'center', padding:'40px 24px', borderTop:'1px solid #141414', fontSize:'12px', color:'#333' }}>
           © 2026 Aegis. All rights reserved. · <a href="/terms" style={{ color:'#444', textDecoration:'none' }}>Terms</a> · <a href="/refunds" style={{ color:'#444', textDecoration:'none' }}>Refunds</a>
