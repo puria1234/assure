@@ -27,7 +27,7 @@ export default function PricingPage() {
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
           </svg>
-          <span className="nav-logo-text">Aegis</span>
+          <span className="nav-logo-text">Assure</span>
         </a>
         <div className="nav-links">
           <a href="/#features" className="nav-link">Features</a>
@@ -99,7 +99,7 @@ export default function PricingPage() {
       </div>
 
       <footer>
-        <div style={{ fontSize: '13px', color: '#444' }}>© {new Date().getFullYear()} Aegis. All rights reserved.</div>
+        <div style={{ fontSize: '13px', color: '#444' }}>© {new Date().getFullYear()} Assure. All rights reserved.</div>
         <div style={{ display: 'flex', gap: '24px' }}>
           <a href="/privacy" style={{ fontSize: '13px', color: '#444', textDecoration: 'none' }}>Privacy</a>
           <a href="/terms" style={{ fontSize: '13px', color: '#444', textDecoration: 'none' }}>Terms</a>

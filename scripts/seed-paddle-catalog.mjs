@@ -1,4 +1,4 @@
-// Run once to create Aegis subscription products in Paddle sandbox.
+// Run once to create Assure subscription products in Paddle sandbox.
 // Usage: node scripts/seed-paddle-catalog.mjs
 //
 // Requires: PADDLE_SANDBOX_API_KEY env var

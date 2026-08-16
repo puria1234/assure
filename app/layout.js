@@ -8,7 +8,7 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: 'Aegis',
+  title: 'Assure',
   description: 'Track and manage all your product warranties in one place.',
   icons: {
     icon: '/favicon.png',
@@ -22,7 +22,7 @@ export const metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'Aegis',
+    title: 'Assure',
   },
   other: {
     'mobile-web-app-capable': 'yes',
