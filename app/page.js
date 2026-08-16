@@ -193,7 +193,7 @@ export default function LandingPage() {
 
         <div className="hero-content">
           <h1 className="headline-xl" style={{ maxWidth:'900px' }}>
-            Every<br/>Warranty.<br/><span style={{ color:'#333' }}>Protected.</span>
+            Every<br/>Warranty.<br/><span style={{ color:'#333' }}>Assured.</span>
           </h1>
 
           <div style={{ display:'flex', alignItems:'flex-end', justifyContent:'space-between', marginTop:'48px', flexWrap:'wrap', gap:'32px' }}>
@@ -842,10 +842,6 @@ export default function LandingPage() {
         <div className="cta-section reveal">
           <div className="cta-bg-text">Aegis</div>
           <div style={{ position:'relative', zIndex:'1' }}>
-            <div style={{ display:'inline-flex', alignItems:'center', gap:'8px', background:'rgba(0,0,0,0.06)', border:'1px solid rgba(0,0,0,0.1)', borderRadius:'100px', padding:'6px 14px', marginBottom:'28px' }}>
-              <svg width="12" height="12" viewBox="0 0 24 26" fill="none" stroke="black" strokeWidth="2.5"><path d="M12 2L3 7v7c0 5 4.5 9.5 9 11 4.5-1.5 9-6 9-11V7L12 2z"/><path d="M9 12l2 2 4-4"/></svg>
-              <span style={{ fontSize:'11px', fontWeight:'700', color:'#000', textTransform:'uppercase', letterSpacing:'0.12em' }}>Your warranty guardian</span>
-            </div>
             <h2 className="headline-lg" style={{ color:'#000', marginBottom:'20px', maxWidth:'700px', marginLeft:'auto', marginRight:'auto' }}>
               Start protecting<br/>what you own.
             </h2>
