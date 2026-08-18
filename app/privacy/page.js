@@ -6,13 +6,13 @@ export default function PrivacyPage() {
   return (
     <html>
       <head>
-        <title>Privacy Policy | Aegis</title>
+        <title>Privacy Policy | Assure</title>
       </head>
       <body style={{ background:'#0a0a0a', color:'#fff', fontFamily:'Inter, sans-serif', margin:0 }}>
         <nav style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 48px', height:'68px', borderBottom:'1px solid #141414' }}>
           <a href="/" style={{ display:'flex', alignItems:'center', gap:'10px', textDecoration:'none' }}>
-            <img src="/favicon.png" width="24" height="24" alt="Aegis" />
-            <span style={{ fontSize:'15px', fontWeight:'800', letterSpacing:'0.15em', textTransform:'uppercase', color:'#fff', lineHeight:1 }}>Aegis</span>
+            <img src="/favicon.png" width="24" height="24" alt="Assure" />
+            <span style={{ fontSize:'15px', fontWeight:'800', letterSpacing:'0.15em', textTransform:'uppercase', color:'#fff', lineHeight:1 }}>Assure</span>
           </a>
           <a href="/" style={{ fontSize:'13px', color:'#555', textDecoration:'none' }}>← Back</a>
         </nav>
@@ -42,7 +42,7 @@ export default function PrivacyPage() {
           </ul>
 
           <h2 style={h2Style}>3. Information Sharing</h2>
-          <p style={pStyle}>We do not sell your personal information. Your data is only used to provide the service to you and is never shared with other users or third parties, aside from the providers listed below who help us run Aegis.</p>
+          <p style={pStyle}>We do not sell your personal information. Your data is only used to provide the service to you and is never shared with other users or third parties, aside from the providers listed below who help us run Assure.</p>
 
           <h2 style={h2Style}>4. Data Security</h2>
           <p style={pStyle}>We take the security of your data seriously and implement industry standard security measures:</p>
@@ -66,14 +66,14 @@ export default function PrivacyPage() {
           </ul>
 
           <h2 style={h2Style}>6. Children's Privacy</h2>
-          <p style={pStyle}>Aegis isn't meant for anyone under 16, and we don't knowingly collect their data. If we find out we have, we'll delete it right away.</p>
+          <p style={pStyle}>Assure isn't meant for anyone under 16, and we don't knowingly collect their data. If we find out we have, we'll delete it right away.</p>
 
           <h2 style={h2Style}>7. Changes to This Policy</h2>
-          <p style={pStyle}>We'll give you at least 14 days' notice before any material change takes effect. Using Aegis after that means you're on board with the update.</p>
+          <p style={pStyle}>We'll give you at least 14 days' notice before any material change takes effect. Using Assure after that means you're on board with the update.</p>
 
         </main>
         <footer>
-          <div className="footer-text">© 2026 Aegis. All rights reserved.</div>
+          <div className="footer-text">© 2026 Assure. All rights reserved.</div>
           <div style={{ display:'flex', gap:'24px' }}>
             <a href="/privacy" style={{ fontSize:'13px', color:'#444', textDecoration:'none' }}>Privacy</a>
             <a href="/terms" style={{ fontSize:'13px', color:'#444', textDecoration:'none' }}>Terms</a>

@@ -586,7 +586,7 @@ export default function AppPage() {
         showToast('Notifications are blocked. Enable them in your browser settings.', 'error');
         return;
       }
-      new Notification('Aegis: Test Notification', {
+      new Notification('Assure: Test Notification', {
         body: 'Browser notifications are working correctly.',
         icon: '/favicon.png',
       });
@@ -832,8 +832,8 @@ export default function AppPage() {
       {/* ── Nav ── */}
       <nav style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 24px', height:'56px', borderBottom:'1px solid #141414', background:'rgba(8,8,8,0.95)', backdropFilter:'blur(20px)', position:'sticky', top:0, zIndex:100 }}>
         <a href="/" style={{ display:'flex', alignItems:'center', gap:'10px', textDecoration:'none' }}>
-          <img src="/favicon.png" width="28" height="28" alt="AEGIS" style={{ borderRadius:'6px' }} />
-          <span style={{ fontSize:'15px', fontWeight:'800', letterSpacing:'0.15em', textTransform:'uppercase', color:'#fff', lineHeight:1 }}>AEGIS</span>
+          <img src="/favicon.png" width="28" height="28" alt="ASSURE" style={{ borderRadius:'6px' }} />
+          <span style={{ fontSize:'15px', fontWeight:'800', letterSpacing:'0.15em', textTransform:'uppercase', color:'#fff', lineHeight:1 }}>ASSURE</span>
           <span className="hide-mobile" style={{ fontSize:'12px', fontWeight:500, color:'#444', letterSpacing:'0.02em', marginLeft:'2px' }}>Warranty Tracker</span>
         </a>
         <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>

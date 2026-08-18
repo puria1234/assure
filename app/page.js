@@ -126,8 +126,8 @@ export default function LandingPage() {
       {/* NAV */}
       <nav id="navbar" ref={navRef} style={{ position: 'fixed', width: '100%', zIndex: 100, display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '68px', padding: '0 5vmin', background: 'rgba(8,8,8,0.85)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(255,255,255,0.04)', transition: 'border-color 0.3s ease' }}>
         <a href="/" className="nav-logo" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
-          <img src="/favicon.png" width="28" height="28" alt="AEGIS" />
-          <span className="nav-logo-text" style={{ fontSize: '15px', fontWeight: '800', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#fff', lineHeight: 1 }}>Aegis</span>
+          <img src="/favicon.png" width="28" height="28" alt="ASSURE" />
+          <span className="nav-logo-text" style={{ fontSize: '15px', fontWeight: '800', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#fff', lineHeight: 1 }}>Assure</span>
         </a>
         
         {/* Desktop Links */}
@@ -193,13 +193,13 @@ export default function LandingPage() {
 
         <div className="hero-content">
           <h1 className="headline-xl" style={{ maxWidth:'900px' }}>
-            Every<br/>Warranty.<br/><span style={{ color:'#333' }}>Protected.</span>
+            Every<br/>Warranty.<br/><span style={{ color:'#333' }}>Assured.</span>
           </h1>
 
           <div style={{ display:'flex', alignItems:'flex-end', justifyContent:'space-between', marginTop:'48px', flexWrap:'wrap', gap:'32px' }}>
             <div style={{ maxWidth:'440px' }}>
               <p className="body-text" style={{ fontSize:'18px', marginBottom:'32px' }}>
-                Aegis is the premium warranty tracker built for people who buy things worth protecting. Add once, never lose coverage again.
+                Assure is the premium warranty tracker built for people who buy things worth protecting. Add once, never lose coverage again.
               </p>
               <div style={{ display:'flex', alignItems:'center', gap:'12px', flexWrap:'wrap' }}>
                 <a href={user ? "/app" : "/login"} className="btn-cta">
@@ -350,8 +350,8 @@ export default function LandingPage() {
                   <div style={{ width:'1200px', minHeight:'860px', transform:'scale(0.726)', transformOrigin:'top left', pointerEvents:'none', textAlign:'left', background:'#080808', color:'#fff', fontFamily:'Inter, sans-serif' }}>
                     <nav style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 24px', height:'56px', borderBottom:'1px solid #141414', background:'rgba(8,8,8,0.95)', backdropFilter:'blur(20px)', position:'sticky', top:0, zIndex:100 }}>
                       <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
-                        <img src="/icon.png" width="28" height="28" alt="AEGIS" style={{ borderRadius:'6px' }} />
-                        <span style={{ fontSize:'15px', fontWeight:'800', letterSpacing:'0.15em', textTransform:'uppercase', color:'#fff', lineHeight:1 }}>AEGIS</span>
+                        <img src="/icon.png" width="28" height="28" alt="ASSURE" style={{ borderRadius:'6px' }} />
+                        <span style={{ fontSize:'15px', fontWeight:'800', letterSpacing:'0.15em', textTransform:'uppercase', color:'#fff', lineHeight:1 }}>ASSURE</span>
                         <span style={{ fontSize:'12px', fontWeight:500, color:'#444', letterSpacing:'0.02em', marginLeft:'2px' }}>Warranty Tracker</span>
                       </div>
                       <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
@@ -513,7 +513,7 @@ export default function LandingPage() {
       {/* FEATURES */}
       <section id="features">
         <div className="reveal" style={{ marginBottom:'64px' }}>
-          <div className="eyebrow" style={{ marginBottom:'16px' }}>Why Aegis</div>
+          <div className="eyebrow" style={{ marginBottom:'16px' }}>Why Assure</div>
           <h2 className="headline-lg" style={{ maxWidth:'620px' }}>Built for every<br/>product you own.</h2>
         </div>
 
@@ -527,7 +527,7 @@ export default function LandingPage() {
               </svg>
             </div>
             <div className="feature-title">Universal Tracking</div>
-            <div className="feature-desc">Track warranties across every product category, from sneakers to refrigerators to cars. If you bought it, Aegis protects it.</div>
+            <div className="feature-desc">Track warranties across every product category, from sneakers to refrigerators to cars. If you bought it, Assure protects it.</div>
           </div>
 
           <div className="feature-card reveal reveal-delay-1">
@@ -588,7 +588,7 @@ export default function LandingPage() {
               </svg>
             </div>
             <div className="feature-title">AI Claim Assistant</div>
-            <div className="feature-desc">Filing a warranty claim is painful. Aegis AI guides you through it, drafting dispute letters, suggesting next steps, and knowing exactly what to say.</div>
+            <div className="feature-desc">Filing a warranty claim is painful. Assure AI guides you through it, drafting dispute letters, suggesting next steps, and knowing exactly what to say.</div>
           </div>
 
         </div>
@@ -630,7 +630,7 @@ export default function LandingPage() {
             </div>
             <div className="step-number">02</div>
             <div style={{ fontSize:'18px', fontWeight:'800', letterSpacing:'-0.02em', marginBottom:'12px' }}>Set the Duration</div>
-            <div className="feature-desc">Use quick-duration buttons (1 yr, 2 yr, 5 yr) or pick a custom expiry date. Aegis calculates everything.</div>
+            <div className="feature-desc">Use quick-duration buttons (1 yr, 2 yr, 5 yr) or pick a custom expiry date. Assure calculates everything.</div>
           </div>
 
           <div style={{ textAlign:'center', padding:'0 32px', position:'relative', zIndex:'1' }}>
@@ -642,7 +642,7 @@ export default function LandingPage() {
             </div>
             <div className="step-number">03</div>
             <div style={{ fontSize:'18px', fontWeight:'800', letterSpacing:'-0.02em', marginBottom:'12px' }}>Stay Protected</div>
-            <div className="feature-desc">Aegis tracks your coverage, alerts you when warranties are about to expire, and keeps your entire collection organized.</div>
+            <div className="feature-desc">Assure tracks your coverage, alerts you when warranties are about to expire, and keeps your entire collection organized.</div>
           </div>
 
         </div>
@@ -656,8 +656,8 @@ export default function LandingPage() {
           <div>
             <div className="eyebrow" style={{ marginBottom:'16px' }}>Everything, Organized</div>
             <h2 className="headline-lg" style={{ marginBottom:'24px' }}>Nine categories.<br/>One dashboard.</h2>
-            <p className="body-text" style={{ marginBottom:'36px' }}>From AirPods to automobiles, Aegis handles every type of purchase. Tap any category to instantly filter your view.</p>
-            <a href="/login" className="btn-cta">Open Aegis</a>
+            <p className="body-text" style={{ marginBottom:'36px' }}>From AirPods to automobiles, Assure handles every type of purchase. Tap any category to instantly filter your view.</p>
+            <a href="/login" className="btn-cta">Open Assure</a>
           </div>
           <div className="responsive-grid-cat" style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:'12px' }}>
 
@@ -718,7 +718,7 @@ export default function LandingPage() {
           <div className="eyebrow" style={{ marginBottom:'16px' }}>Privacy First</div>
           <h2 className="headline-lg" style={{ maxWidth:'760px', margin:'0 auto 18px' }}>Your warranty data<br/>belongs to you.</h2>
           <p className="body-text" style={{ maxWidth:'640px', margin:'0 auto' }}>
-            Aegis is built to keep your warranties, receipts, and scan insights private by default. Your data stays secure, under your control, and never sold.
+            Assure is built to keep your warranties, receipts, and scan insights private by default. Your data stays secure, under your control, and never sold.
           </p>
         </div>
 
@@ -817,7 +817,7 @@ export default function LandingPage() {
       {/* BIG STATEMENT */}
       <div style={{ background:'#0c0c0c', borderTop:'1px solid #141414', borderBottom:'1px solid #141414', padding:'100px 48px', textAlign:'center', overflow:'hidden' }} className="reveal">
         <div style={{ maxWidth:'900px', margin:'0 auto' }}>
-          <div className="eyebrow" style={{ marginBottom:'20px' }}>The Aegis Philosophy</div>
+          <div className="eyebrow" style={{ marginBottom:'20px' }}>The Assure Philosophy</div>
           <p style={{ fontSize:'clamp(22px,4vw,42px)', fontWeight:'800', letterSpacing:'-0.03em', lineHeight:'1.15', color:'#fff' }}>
             The average household owns over<br/>
             <span style={{ color:'transparent', WebkitTextStroke:'1px #555' }}>40 products</span>
@@ -830,7 +830,7 @@ export default function LandingPage() {
             {' '}of them.
           </p>
           <p className="body-text" style={{ marginTop:'24px', fontSize:'16px', maxWidth:'520px', marginLeft:'auto', marginRight:'auto' }}>
-            Aegis exists to change that. No excuses, no missed claims, no wasted money on extended warranties you already have.
+            Assure exists to change that. No excuses, no missed claims, no wasted money on extended warranties you already have.
           </p>
         </div>
       </div>
@@ -840,12 +840,8 @@ export default function LandingPage() {
       {/* FINAL CTA */}
       <section>
         <div className="cta-section reveal">
-          <div className="cta-bg-text">Aegis</div>
+          <div className="cta-bg-text">Assure</div>
           <div style={{ position:'relative', zIndex:'1' }}>
-            <div style={{ display:'inline-flex', alignItems:'center', gap:'8px', background:'rgba(0,0,0,0.06)', border:'1px solid rgba(0,0,0,0.1)', borderRadius:'100px', padding:'6px 14px', marginBottom:'28px' }}>
-              <svg width="12" height="12" viewBox="0 0 24 26" fill="none" stroke="black" strokeWidth="2.5"><path d="M12 2L3 7v7c0 5 4.5 9.5 9 11 4.5-1.5 9-6 9-11V7L12 2z"/><path d="M9 12l2 2 4-4"/></svg>
-              <span style={{ fontSize:'11px', fontWeight:'700', color:'#000', textTransform:'uppercase', letterSpacing:'0.12em' }}>Your warranty guardian</span>
-            </div>
             <h2 className="headline-lg" style={{ color:'#000', marginBottom:'20px', maxWidth:'700px', marginLeft:'auto', marginRight:'auto' }}>
               Start protecting<br/>what you own.
             </h2>
@@ -853,7 +849,7 @@ export default function LandingPage() {
               Start tracking your warranties in minutes. Free to use.
             </p>
             <a href="/login" className="btn-cta-dark">
-              Open Aegis
+              Open Assure
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
           </div>
@@ -863,7 +859,7 @@ export default function LandingPage() {
       {/* FOOTER */}
       <footer style={{ flexDirection:'column', gap:'0', padding:'0' }}>
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:'16px', padding:'20px 48px' }}>
-          <div style={{ fontSize:'12px', color:'#333' }}>&copy; 2026 Aegis. All rights reserved.</div>
+          <div style={{ fontSize:'12px', color:'#333' }}>&copy; 2026 Assure. All rights reserved.</div>
           <div style={{ display:'flex', alignItems:'center', gap:'24px' }}>
             <a href="/terms" style={{ fontSize:'12px', color:'#444', textDecoration:'none', transition:'color 0.15s' }}
               onMouseOver={(e) => e.currentTarget.style.color = '#888'}

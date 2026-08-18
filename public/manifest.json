@@ -1,6 +1,6 @@
 {
-  "name": "AEGIS - Warranty Guardian",
-  "short_name": "AEGIS",
+  "name": "ASSURE",
+  "short_name": "ASSURE",
   "description": "Track and manage all your product warranties in one place.",
   "start_url": "/app",
   "display": "standalone",

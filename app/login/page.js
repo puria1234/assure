@@ -171,10 +171,9 @@ export default function LoginPage() {
         {/* Logo */}
         <div style={{ textAlign:'center', marginBottom:'28px' }}>
           <a href="/" style={{ display:'block', marginBottom:'20px' }}>
-            <img src="/favicon.png" width="48" height="48" alt="AEGIS" style={{ display: 'block', margin: '0 auto' }} />
+            <img src="/favicon.png" width="48" height="48" alt="ASSURE" style={{ display: 'block', margin: '0 auto' }} />
           </a>
-          <div style={{ fontSize:'24px', fontWeight:'800', letterSpacing:'0.15em', textTransform:'uppercase', lineHeight:1, color:'#fff' }}>Aegis</div>
-          <div style={{ fontSize:'12px', color:'#444', fontWeight:600, letterSpacing:'0.1em', textTransform:'uppercase', marginTop:'6px' }}>Warranty Guardian</div>
+          <div style={{ fontSize:'24px', fontWeight:'800', letterSpacing:'0.15em', textTransform:'uppercase', lineHeight:1, color:'#fff' }}>Assure</div>
         </div>
 
         {/* Tabs */}
@@ -339,7 +338,7 @@ export default function LoginPage() {
         )}
         <div style={{ textAlign:'center', marginTop:'20px' }}>
           <a href="/" style={{ fontSize:'13px', color:'#444', textDecoration:'none', transition:'color 0.15s' }} onMouseOver={e=>e.target.style.color='#888'} onMouseOut={e=>e.target.style.color='#444'}>
-            ← Back to Aegis
+            ← Back to Assure
           </a>
         </div>
       </div>
