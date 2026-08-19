@@ -126,7 +126,7 @@ export default function AppPage() {
   const [isMobileView, setIsMobileView] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
-  const [notifPrefs, setNotifPrefs] = useState({ enabled: false, daysBefore: 30, channel: 'browser' });
+  const [notifPrefs, setNotifPrefs] = useState({ enabled: false, daysBefore: 30 });
   const [savingNotifPrefs, setSavingNotifPrefs] = useState(false);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -172,8 +172,6 @@ export default function AppPage() {
   const [claimInput, setClaimInput] = useState('');
   const [claimLoading, setClaimLoading] = useState(false);
 
-  const [testingNotif, setTestingNotif] = useState(false);
-  const [notifPermission, setNotifPermission] = useState('default');
 
   // ── Refs ───────────────────────────────────────────────────────────────────
   const userMenuRef = useRef(null);
@@ -182,14 +180,13 @@ export default function AppPage() {
   const animTimers = useRef({});
   const statValuesRef = useRef({ total:0, active:0, expiring:0, expired:0 });
   const warrantiesRef = useRef([]);
-  const notifPrefsRef = useRef({ enabled:false, daysBefore:30, channel:'browser' });
   const unsubWarrantiesRef = useRef(null);
   const isSigningOutRef = useRef(false);
   const claimScrollRef = useRef(null);
 
   useEffect(() => { statValuesRef.current = statValues; }, [statValues]);
   useEffect(() => { warrantiesRef.current = warranties; }, [warranties]);
-  useEffect(() => { notifPrefsRef.current = notifPrefs; }, [notifPrefs]);
+
   useEffect(() => {
     if (claimScrollRef.current) {
       claimScrollRef.current.scrollTop = claimScrollRef.current.scrollHeight;
@@ -288,7 +285,6 @@ export default function AppPage() {
             const normalizedPrefs = {
               enabled: !!data.notificationPrefs.enabled,
               daysBefore: data.notificationPrefs.daysBefore || 30,
-              channel: 'browser',
             };
             setNotifPrefs(normalizedPrefs);
             setSelectedDaysBefore(normalizedPrefs.daysBefore);
@@ -303,7 +299,7 @@ export default function AppPage() {
           const newProfile = {
             name: user.displayName || user.email.split('@')[0],
             email: user.email,
-            notificationPrefs: { enabled: false, daysBefore: 30, channel: 'browser' },
+            notificationPrefs: { enabled: false, daysBefore: 30 },
             createdAt: serverTimestamp()
           };
           await setDoc(profileRef, newProfile);
@@ -569,36 +565,10 @@ export default function AppPage() {
     }
   };
 
-  // ── Test browser notification ──────────────────────────────────────────────
-  const sendTestNotification = async () => {
-    if (typeof window === 'undefined' || !('Notification' in window)) {
-      showToast('Browser notifications are not supported on this device.', 'error');
-      return;
-    }
-    setTestingNotif(true);
-    try {
-      let permission = Notification.permission;
-      if (permission === 'default') {
-        permission = await Notification.requestPermission();
-        setNotifPermission(permission);
-      }
-      if (permission === 'denied') {
-        showToast('Notifications are blocked. Enable them in your browser settings.', 'error');
-        return;
-      }
-      new Notification('Assure: Test Notification', {
-        body: 'Browser notifications are working correctly.',
-        icon: '/favicon.png',
-      });
-    } finally {
-      setTestingNotif(false);
-    }
-  };
-
   // ── Save notification prefs ────────────────────────────────────────────────
   const saveNotifPrefs = async () => {
     if (!currentUser || savingNotifPrefs) return;
-    const prefs = { enabled: notifPrefs.enabled, daysBefore: selectedDaysBefore, channel: 'browser' };
+    const prefs = { enabled: notifPrefs.enabled, daysBefore: selectedDaysBefore };
     setSavingNotifPrefs(true);
     try {
       const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 10000));
@@ -607,13 +577,6 @@ export default function AppPage() {
         timeout
       ]);
       setNotifPrefs(prefs);
-
-      if (prefs.enabled && typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'default') {
-        const permission = await Notification.requestPermission();
-        if (permission !== 'granted') {
-          showToast('Browser notification permission was not granted.', 'error');
-        }
-      }
 
       showToast('Notification preferences saved.', 'success');
       setBellRing(true);
@@ -838,7 +801,7 @@ export default function AppPage() {
         </a>
         <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
           {/* Bell */}
-          <button onClick={() => { setShowNotifModal(true); setUserMenuOpen(false); if (typeof window !== 'undefined' && 'Notification' in window) setNotifPermission(Notification.permission); }} style={{ position:'relative', background:'none', border:'1px solid #1e1e1e', borderRadius:'8px', padding:'7px', color:'#666', cursor:'pointer', transition:'all 0.15s', lineHeight:0 }} className={`hide-mobile${bellRing ? ' bell-ring' : ''}`} title="Notifications">
+          <button onClick={() => { setShowNotifModal(true); setUserMenuOpen(false); }} style={{ position:'relative', background:'none', border:'1px solid #1e1e1e', borderRadius:'8px', padding:'7px', color:'#666', cursor:'pointer', transition:'all 0.15s', lineHeight:0 }} className={`hide-mobile${bellRing ? ' bell-ring' : ''}`} title="Notifications">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
             {expiringCount > 0 && (
               <span className="notif-badge" style={{ position:'absolute', top:'-4px', right:'-4px', background:'#f59e0b', color:'#000', fontSize:'9px', fontWeight:800, borderRadius:'10px', minWidth:'16px', height:'16px', display:'flex', alignItems:'center', justifyContent:'center', padding:'0 3px' }}>
@@ -893,7 +856,7 @@ export default function AppPage() {
                     <div style={{ fontSize:'10px', color:'#333' }}>Resets on the 1st of each month</div>
                   </div>
                 </div>
-                <button onClick={() => { setShowNotifModal(true); setUserMenuOpen(false); if (typeof window !== 'undefined' && 'Notification' in window) setNotifPermission(Notification.permission); }} style={{ display:'flex', alignItems:'center', gap:'10px', width:'100%', padding:'9px 12px', background:'none', border:'none', color:'#888', fontSize:'13px', cursor:'pointer', borderRadius:'7px', transition:'all 0.15s', textAlign:'left' }} onMouseOver={e=>e.currentTarget.style.background='#161616'} onMouseOut={e=>e.currentTarget.style.background='none'}>
+                <button onClick={() => { setShowNotifModal(true); setUserMenuOpen(false); }} style={{ display:'flex', alignItems:'center', gap:'10px', width:'100%', padding:'9px 12px', background:'none', border:'none', color:'#888', fontSize:'13px', cursor:'pointer', borderRadius:'7px', transition:'all 0.15s', textAlign:'left' }} onMouseOver={e=>e.currentTarget.style.background='#161616'} onMouseOut={e=>e.currentTarget.style.background='none'}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
                   Notifications
                 </button>
@@ -1296,44 +1259,28 @@ export default function AppPage() {
             <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'24px' }}>
               <div>
                 <h2 style={{ fontSize:'18px', fontWeight:800, letterSpacing:'-0.03em', margin:0 }}>Notifications</h2>
-                <p style={{ fontSize:'12px', color:'#444', margin:'4px 0 0' }}>Manage expiry reminder settings</p>
+                <p style={{ fontSize:'12px', color:'#444', margin:'4px 0 0' }}>Expiry reminder preferences</p>
               </div>
               <button onClick={() => setShowNotifModal(false)} style={{ background:'none', border:'1px solid #1e1e1e', borderRadius:'8px', color:'#555', cursor:'pointer', padding:'8px', lineHeight:0 }}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
               </button>
             </div>
-            {/* Browser notification info */}
-            <div style={{ background:'#0f0f0f', border:'1px solid #1a1a1a', borderRadius:'12px', padding:'14px 16px', marginBottom:'12px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px' }}>
+            {/* Email notifications, not built yet */}
+            <div style={{ background:'#0f0f0f', border:'1px solid #1a1a1a', borderRadius:'12px', padding:'14px 16px', marginBottom:'12px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', opacity:0.55 }}>
               <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>
                 <div>
-                  <div style={{ fontSize:'13px', fontWeight:600, color:'#ccc' }}>Browser Notifications</div>
-                  <div style={{ fontSize:'11px', color:'#444', marginTop:'2px' }}>
-                    {notifPermission === 'granted' && 'Permission granted'}
-                    {notifPermission === 'denied' && 'Blocked. Enable in browser settings.'}
-                    {notifPermission === 'default' && 'Permission not yet requested'}
-                  </div>
+                  <div style={{ fontSize:'13px', fontWeight:600, color:'#ccc' }}>Email Notifications</div>
+                  <div style={{ fontSize:'11px', color:'#444', marginTop:'2px' }}>Expiry reminders sent to your inbox</div>
                 </div>
               </div>
-              <div style={{ display:'flex', alignItems:'center', gap:'8px', flexShrink:0 }}>
-                <div style={{ width:7, height:7, borderRadius:'50%', background: notifPermission === 'granted' ? '#4ade80' : notifPermission === 'denied' ? '#ef4444' : '#f59e0b', flexShrink:0 }} />
-                <button
-                  type="button"
-                  onClick={sendTestNotification}
-                  disabled={testingNotif}
-                  style={{ padding:'6px 12px', borderRadius:'7px', border:'1px solid #2a2a2a', background:'#1a1a1a', color:'#888', fontSize:'11px', fontWeight:700, letterSpacing:'0.04em', textTransform:'uppercase', cursor:'pointer', transition:'all 0.15s', whiteSpace:'nowrap' }}
-                  onMouseOver={e => { e.currentTarget.style.background='#222'; e.currentTarget.style.color='#ccc'; }}
-                  onMouseOut={e => { e.currentTarget.style.background='#1a1a1a'; e.currentTarget.style.color='#888'; }}
-                >
-                  {testingNotif ? 'Sending…' : 'Test'}
-                </button>
-              </div>
+              <span style={{ flexShrink:0, padding:'5px 10px', borderRadius:'100px', border:'1px solid #2a2a2a', background:'#1a1a1a', color:'#777', fontSize:'10px', fontWeight:700, letterSpacing:'0.12em', textTransform:'uppercase', whiteSpace:'nowrap' }}>Coming soon</span>
             </div>
             <div style={{ background:'#0f0f0f', border:'1px solid #1a1a1a', borderRadius:'12px', padding:'16px', marginBottom:'16px' }}>
               <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
                 <div>
                   <div style={{ fontSize:'14px', fontWeight:600, color:'#e0e0e0', marginBottom:'2px' }}>Enable Reminders</div>
-                  <div style={{ fontSize:'12px', color:'#444' }}>Get notified before warranties expire</div>
+                  <div style={{ fontSize:'12px', color:'#444' }}>Remind me before warranties expire, once email is available</div>
                 </div>
                 <button
                   className="toggle-track"

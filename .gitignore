@@ -44,3 +44,6 @@ next-env.d.ts
 scripts/serviceAccountKey.json
 *serviceAccount*.json
 firebase-adminsdk-*.json
+
+# playwright-mcp scratch output
+.playwright-mcp/

@@ -4,9 +4,9 @@ import { adminAuth, adminDb } from '../../../lib/firebase-admin';
 const SCAN_LIMIT = 3; // Free plan
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 const AI_GATEWAY_URL = process.env.AI_GATEWAY_URL || 'https://ai-gateway.vercel.sh/v1';
-const VISION_MODEL = process.env.MISTRAL_VISION_MODEL || 'mistral/pixtral-large';
+const VISION_MODEL = process.env.VISION_MODEL || 'mistral/mistral-medium-3.5';
 
-async function callPixtral(image, mimeType) {
+async function callVisionModel(image, mimeType) {
   const apiKey = process.env.AI_GATEWAY_API_KEY;
   if (!apiKey) {
     throw new Error('Missing AI_GATEWAY_API_KEY');
@@ -81,17 +81,17 @@ export async function POST(request) {
     const { image, mimeType } = await request.json();
     if (!image) return NextResponse.json({ error: 'No image provided' }, { status: 400 });
 
-    let response = await callPixtral(image, mimeType);
+    let response = await callVisionModel(image, mimeType);
 
     // Retry once on 429 after a short backoff
     if (response.status === 429) {
       await sleep(3000);
-      response = await callPixtral(image, mimeType);
+      response = await callVisionModel(image, mimeType);
     }
 
     if (!response.ok) {
       const errText = await response.text();
-      console.error('AI Gateway Pixtral error:', response.status, errText);
+      console.error('AI Gateway vision error:', response.status, errText);
       if (response.status === 429) {
         return NextResponse.json({ error: 'Rate limit reached. Wait a few seconds and try again.' }, { status: 429 });
       }
@@ -108,7 +108,7 @@ export async function POST(request) {
     const cleaned = content.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
     const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
-      console.error('No JSON in Pixtral response:', content);
+      console.error('No JSON in vision response:', content);
       return NextResponse.json({ error: 'Could not read receipt. Try a clearer photo.' }, { status: 422 });
     }
 

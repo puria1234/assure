@@ -24,9 +24,7 @@ export default function PricingPage() {
       {/* Nav */}
       <nav id="navbar">
         <a href="/" className="nav-logo">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-          </svg>
+          <img src="/favicon.png" width="22" height="22" alt="Assure" />
           <span className="nav-logo-text">Assure</span>
         </a>
         <div className="nav-links">
@@ -46,10 +44,9 @@ export default function PricingPage() {
         <div style={{
           display: 'inline-flex', alignItems: 'center', gap: '8px',
           border: '1px solid #2a2a2a', borderRadius: '100px',
-          padding: '6px 16px 6px 10px', marginBottom: '32px',
+          padding: '6px 16px', marginBottom: '32px',
           background: 'rgba(255,255,255,0.03)',
         }}>
-          <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#f59e0b', boxShadow: '0 0 8px #f59e0b', display: 'inline-block' }} />
           <span style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#888' }}>Coming Soon</span>
         </div>
         <h1 className="headline-lg" style={{ marginBottom: '20px' }}>
@@ -71,8 +68,8 @@ export default function PricingPage() {
         justifyContent: 'center',
       }}>
         <PlanCard plan={PLANS.free} planKey="free" current />
-        <PlanCard plan={PLANS.protect} planKey="protect" badge="Coming Soon" />
-        <PlanCard plan={PLANS.protectPlus} planKey="protectPlus" badge="Coming Soon" highlighted />
+        <PlanCard plan={PLANS.plus} planKey="plus" badge="Coming Soon" />
+        <PlanCard plan={PLANS.unlimited} planKey="unlimited" badge="Coming Soon" highlighted />
       </div>
 
       {/* FAQ */}
@@ -161,7 +158,7 @@ function PlanCard({ plan, planKey, badge, highlighted, current }) {
       </div>
 
       <div style={{ fontSize: '12px', color: highlighted ? '#999' : '#444', marginBottom: '28px' }}>
-        {isFree ? 'Free forever' : '14-day free trial included'}
+        {isFree ? 'Free forever' : 'Not yet available'}
       </div>
 
       {/* CTA */}

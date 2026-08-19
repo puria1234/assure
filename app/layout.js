@@ -11,6 +11,8 @@ export const metadata = {
   title: 'Assure',
   description: 'Track and manage all your product warranties in one place.',
   icons: {
+    // Required: defining an `icons` object suppresses the file-based
+    // app/icon.png link, so the favicon must be declared explicitly here.
     icon: '/favicon.png',
     apple: [
       { url: '/apple-touch-icon-180.png', sizes: '180x180', type: 'image/png' },
