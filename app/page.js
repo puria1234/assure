@@ -199,7 +199,7 @@ export default function LandingPage() {
           <div style={{ display:'flex', alignItems:'flex-end', justifyContent:'space-between', marginTop:'48px', flexWrap:'wrap', gap:'32px' }}>
             <div style={{ maxWidth:'440px' }}>
               <p className="body-text" style={{ fontSize:'18px', marginBottom:'32px' }}>
-                Every warranty you own in one place. Assure tracks what's still covered, counts down what's running out, and tells you before a claim window closes.
+                Every warranty you own, in one place. Assure keeps track of what’s covered, counts down to what’s expiring, and reminds you before it’s too late to make a claim.
               </p>
               <div style={{ display:'flex', alignItems:'center', gap:'12px', flexWrap:'wrap' }}>
                 <a href={user ? "/app" : "/login"} className="btn-cta">
