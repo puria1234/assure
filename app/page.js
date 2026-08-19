@@ -38,7 +38,6 @@ export default function LandingPage() {
   const navRef = useRef(null);
   const [user, setUser] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [openFaq, setOpenFaq] = useState(null);
   const ipadSectionRef = useRef(null);
   const ipadInnerRef = useRef(null);
 
@@ -136,7 +135,6 @@ export default function LandingPage() {
           <a href="#features" className="nav-link" style={{ fontSize: '11px', fontWeight: '600', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#888', textDecoration: 'none', transition: 'color 0.2s' }} onMouseOver={e => e.target.style.color = '#fff'} onMouseOut={e => e.target.style.color = '#888'}>Features</a>
           <a href="#how-it-works" className="nav-link" style={{ fontSize: '11px', fontWeight: '600', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#888', textDecoration: 'none', transition: 'color 0.2s' }} onMouseOver={e => e.target.style.color = '#fff'} onMouseOut={e => e.target.style.color = '#888'}>How It Works</a>
           <a href="#pricing" className="nav-link" style={{ fontSize: '11px', fontWeight: '600', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#888', textDecoration: 'none', transition: 'color 0.2s' }} onMouseOver={e => e.target.style.color = '#fff'} onMouseOut={e => e.target.style.color = '#888'}>Pricing</a>
-          <a href="#faq" className="nav-link" style={{ fontSize: '11px', fontWeight: '600', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#888', textDecoration: 'none', transition: 'color 0.2s' }} onMouseOver={e => e.target.style.color = '#fff'} onMouseOut={e => e.target.style.color = '#888'}>FAQ</a>
           <a href={user ? "/app" : "/login"} className="btn-cta" style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#fff', color: '#000', padding: '10px 20px', borderRadius: '6px', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.06em', textDecoration: 'none', transition: 'all 0.2s' }}>
             {user ? "Go to Dashboard" : "Open App"}
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -181,7 +179,6 @@ export default function LandingPage() {
       >
         <a href="#features" onClick={() => setMobileMenuOpen(false)} style={{ fontSize: '20px', fontWeight: '700', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#fff', textDecoration: 'none' }}>Features</a>
         <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} style={{ fontSize: '20px', fontWeight: '700', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#fff', textDecoration: 'none' }}>How It Works</a>
-        <a href="#faq" onClick={() => setMobileMenuOpen(false)} style={{ fontSize: '20px', fontWeight: '700', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#fff', textDecoration: 'none' }}>FAQ</a>
         <a href={user ? "/app" : "/login"} onClick={() => setMobileMenuOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#fff', color: '#000', padding: '14px 28px', borderRadius: '8px', fontSize: '14px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.06em', textDecoration: 'none', marginTop: '16px' }}>
           {user ? "Go to Dashboard" : "Open App"}
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -836,57 +833,6 @@ export default function LandingPage() {
           </p>
         </div>
       </div>
-
-      <hr className="divider" />
-
-      {/* FAQ */}
-      <section id="faq">
-        <div className="reveal" style={{ marginBottom:'64px', textAlign:'center' }}>
-          <div className="eyebrow" style={{ marginBottom:'16px' }}>Questions</div>
-          <h2 className="headline-lg">Straight<br/>answers.</h2>
-        </div>
-
-        <div className="reveal" style={{ maxWidth:'760px', margin:'0 auto', borderTop:'1px solid #1a1a1a' }}>
-          {[
-            {
-              q: 'What does Assure actually do?',
-              a: 'It keeps a record of everything you own that is still under warranty, shows you how much of each coverage window is left, and reminds you before one runs out so you can claim while you still can.',
-            },
-            {
-              q: 'What can I upload?',
-              a: 'Photos and images of receipts. Point your camera at a receipt and the AI scanner reads the product, brand, purchase date, price, and retailer, then fills the form for you to check.',
-            },
-            {
-              q: 'How do expiry alerts work?',
-              a: 'Turn on browser notifications and Assure warns you before a warranty lapses, 30 days ahead by default, and you can change how much notice you get.',
-            },
-            {
-              q: 'What do I get for free?',
-              a: 'Five warranties, three AI receipt scans a month, and one claim assistant session a month. No card required.',
-            },
-            {
-              q: 'Who can see my warranty data?',
-              a: 'Only you. Records are readable solely by the account that created them, enforced at the database level rather than only in the app.',
-            },
-          ].map((item, i) => (
-            <div key={i} style={{ borderBottom:'1px solid #1a1a1a' }}>
-              <button
-                onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                aria-expanded={openFaq === i}
-                style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'24px', width:'100%', padding:'26px 4px', background:'none', border:'none', cursor:'pointer', textAlign:'left', color:'#fff', font:'inherit' }}
-              >
-                <span style={{ fontSize:'17px', fontWeight:'700', letterSpacing:'-0.02em' }}>{item.q}</span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" style={{ flexShrink:0, transition:'transform 0.25s ease', transform: openFaq === i ? 'rotate(45deg)' : 'none' }}>
-                  <path d="M12 5v14M5 12h14"/>
-                </svg>
-              </button>
-              {openFaq === i && (
-                <div className="feature-desc" style={{ padding:'0 48px 26px 4px', maxWidth:'620px' }}>{item.a}</div>
-              )}
-            </div>
-          ))}
-        </div>
-      </section>
 
       <hr className="divider" />
 
