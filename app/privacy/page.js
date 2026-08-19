@@ -18,58 +18,75 @@ export default function PrivacyPage() {
         </nav>
         <main style={{ maxWidth:'760px', margin:'0 auto', padding:'80px 24px' }}>
           <h1 style={{ fontSize:'40px', fontWeight:'900', letterSpacing:'-0.03em', marginBottom:'8px' }}>Privacy Policy</h1>
-          <div style={{ fontSize:'14px', color:'#555', marginBottom:'48px' }}>Last updated: 8/7/2026</div>
+          <div style={{ fontSize:'14px', color:'#555', marginBottom:'48px' }}>Last updated: 8/18/2026</div>
 
-          <h2 style={h2Style}>1. Information We Collect</h2>
-          <p style={pStyle}>We collect information you provide directly to us, including:</p>
+          <h2 style={h2Style}>1. What we collect</h2>
+          <p style={pStyle}>We only collect what the service needs to work:</p>
           <ul style={{ paddingLeft:'24px', marginBottom:'16px' }}>
-            <li style={liStyle}>Name and email address</li>
-            <li style={liStyle}>Warranty details you enter, like product names, brands, retailers, dates, prices, and serial numbers</li>
-            <li style={liStyle}>Receipt images, when you use AI scanning</li>
-            <li style={liStyle}>Claim chat messages, when you use the AI claim assistant</li>
-            <li style={liStyle}>Payment and subscription details, handled by Paddle</li>
+            <li style={liStyle}>Your name and email address, from when you register or sign in with Google</li>
+            <li style={liStyle}>Warranty details you enter, such as product names, brands, retailers, dates, prices, and serial numbers</li>
+            <li style={liStyle}>Receipt images you upload for AI scanning</li>
+            <li style={liStyle}>Messages you send to the AI claim assistant</li>
+            <li style={liStyle}>Basic account settings, such as your notification preferences</li>
           </ul>
+          <p style={pStyle}>We never see or store your password. Sign in is handled by Firebase Authentication, and Google sign in gives us only your name and email address.</p>
 
-          <h2 style={h2Style}>2. How We Use Your Information</h2>
-          <p style={pStyle}>We use the information we collect to:</p>
+          <h2 style={h2Style}>2. How we use it</h2>
           <ul style={{ paddingLeft:'24px', marginBottom:'16px' }}>
-            <li style={liStyle}>Create and run your account</li>
-            <li style={liStyle}>Store and display your warranty records</li>
-            <li style={liStyle}>Send expiry alerts, if you've turned them on</li>
-            <li style={liStyle}>Power AI receipt scanning and the claim assistant</li>
-            <li style={liStyle}>Manage your subscription and billing</li>
-            <li style={liStyle}>Improve and maintain our service</li>
+            <li style={liStyle}>To create and run your account</li>
+            <li style={liStyle}>To store your warranty records and show them back to you</li>
+            <li style={liStyle}>To send expiry alerts, if you turn them on</li>
+            <li style={liStyle}>To power AI receipt scanning and the claim assistant</li>
+            <li style={liStyle}>To keep the service working, secure, and free of abuse</li>
           </ul>
+          <p style={pStyle}>We do not use your data for advertising, and we do not build profiles of you.</p>
 
-          <h2 style={h2Style}>3. Information Sharing</h2>
-          <p style={pStyle}>We do not sell your personal information. Your data is only used to provide the service to you and is never shared with other users or third parties, aside from the providers listed below who help us run Assure.</p>
-
-          <h2 style={h2Style}>4. Data Security</h2>
-          <p style={pStyle}>We take the security of your data seriously and implement industry standard security measures:</p>
+          <h2 style={h2Style}>3. Who processes your data</h2>
+          <p style={pStyle}>We do not sell or rent your personal information, and we never share it with other users. We rely on a small number of providers to operate Assure, and each only handles what its job requires:</p>
           <ul style={{ paddingLeft:'24px', marginBottom:'16px' }}>
-            <li style={liStyle}><strong style={{ color:'#bbb' }}>Encryption in transit (TLS):</strong> all data sent between your device and our servers is encrypted using Transport Layer Security</li>
-            <li style={liStyle}><strong style={{ color:'#bbb' }}>Encryption at rest (AES 256):</strong> all data stored in our database is encrypted using AES 256 encryption</li>
-            <li style={liStyle}><strong style={{ color:'#bbb' }}>Secure infrastructure:</strong> we use Google Firestore and Vercel, both enterprise grade platforms with built in security features</li>
-            <li style={liStyle}><strong style={{ color:'#bbb' }}>Access controls:</strong> your data is isolated and protected so only your own authenticated account can read or write it</li>
-            <li style={liStyle}><strong style={{ color:'#bbb' }}>Short lived tokens:</strong> authentication tokens rotate automatically, and we never see your raw password</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Google Firebase:</strong> account authentication and the database holding your warranty records</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Vercel:</strong> hosting the application, and storing uploaded receipt images in private blob storage</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Vercel AI Gateway and Mistral AI:</strong> running the models behind receipt scanning and the claim assistant</li>
           </ul>
-          <p style={pStyle}>While we implement robust security measures, no method of transmission over the internet or electronic storage is 100% secure. We continuously monitor and update our security practices.</p>
+          <p style={pStyle}>We may also disclose information where the law requires it, or where it is necessary to protect the service, our rights, or someone's safety.</p>
 
-          <h2 style={h2Style}>5. Your Rights</h2>
-          <p style={pStyle}>You have the right to:</p>
+          <h2 style={h2Style}>4. How AI features handle your data</h2>
+          <p style={pStyle}>This is worth being specific about. When you scan a receipt, the image is sent to an external AI provider to be read. When you use the claim assistant, your messages and the warranty details relevant to that claim are sent the same way. This happens only when you actively use those features, and it is the only time your content leaves our own storage.</p>
+          <p style={pStyle}>We do not use your content to train AI models, and we do not permit our providers to train on it either.</p>
+
+          <h2 style={h2Style}>5. Security</h2>
+          <p style={pStyle}>The measures we rely on:</p>
           <ul style={{ paddingLeft:'24px', marginBottom:'16px' }}>
-            <li style={liStyle}>Access your personal data</li>
-            <li style={liStyle}>Update or correct your information</li>
-            <li style={liStyle}>Delete your account and associated data</li>
-            <li style={liStyle}>Export your data</li>
-            <li style={liStyle}>Opt out of notifications</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Encryption in transit:</strong> traffic between your device and our services is protected with TLS</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Encryption at rest:</strong> stored data is encrypted by our infrastructure providers</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Database level access rules:</strong> your records are readable and writable only by your own authenticated account, enforced by the database itself rather than only by the app</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Private receipt storage:</strong> uploaded receipt images are stored privately and served only to you through an authenticated route</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Short lived tokens:</strong> session tokens rotate automatically</li>
           </ul>
+          <p style={pStyle}>No service can promise perfect security, and we will not pretend otherwise. We keep our practices under review and will tell you promptly if a breach affects your data.</p>
 
-          <h2 style={h2Style}>6. Children's Privacy</h2>
-          <p style={pStyle}>Assure isn't meant for anyone under 16, and we don't knowingly collect their data. If we find out we have, we'll delete it right away.</p>
+          <h2 style={h2Style}>6. How long we keep it</h2>
+          <p style={pStyle}>Your warranty records and receipt images stay until you delete them or ask us to close your account, at which point we remove them from our active systems. Residual copies may persist briefly in provider backups before being overwritten.</p>
 
-          <h2 style={h2Style}>7. Changes to This Policy</h2>
-          <p style={pStyle}>We'll give you at least 14 days' notice before any material change takes effect. Using Assure after that means you're on board with the update.</p>
+          <h2 style={h2Style}>7. Your rights</h2>
+          <p style={pStyle}>You can:</p>
+          <ul style={{ paddingLeft:'24px', marginBottom:'16px' }}>
+            <li style={liStyle}>See and correct the information held about you</li>
+            <li style={liStyle}>Delete individual warranty records at any time from within the app</li>
+            <li style={liStyle}>Ask us to delete your account and everything attached to it</li>
+            <li style={liStyle}>Ask for a copy of your data</li>
+            <li style={liStyle}>Turn expiry notifications off at any time</li>
+          </ul>
+          <p style={pStyle}>Depending on where you live, you may have further rights under laws such as the GDPR or the CCPA, including the right to object to processing or to complain to your local data protection authority.</p>
+
+          <h2 style={h2Style}>8. Children</h2>
+          <p style={pStyle}>Assure is not intended for anyone under 16, and we do not knowingly collect their data. If we learn that we have, we will delete it.</p>
+
+          <h2 style={h2Style}>9. International transfers</h2>
+          <p style={pStyle}>Our providers operate globally, so your data may be processed in countries other than your own, including the United States. Where that happens, we rely on our providers' standard safeguards for international transfers.</p>
+
+          <h2 style={h2Style}>10. Changes to this policy</h2>
+          <p style={pStyle}>We will post any update here with a new date, and we will give at least 14 days' notice before a material change takes effect.</p>
 
         </main>
         <footer>

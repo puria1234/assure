@@ -38,6 +38,7 @@ export default function LandingPage() {
   const navRef = useRef(null);
   const [user, setUser] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [openFaq, setOpenFaq] = useState(null);
   const ipadSectionRef = useRef(null);
   const ipadInnerRef = useRef(null);
 
@@ -135,6 +136,7 @@ export default function LandingPage() {
           <a href="#features" className="nav-link" style={{ fontSize: '11px', fontWeight: '600', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#888', textDecoration: 'none', transition: 'color 0.2s' }} onMouseOver={e => e.target.style.color = '#fff'} onMouseOut={e => e.target.style.color = '#888'}>Features</a>
           <a href="#how-it-works" className="nav-link" style={{ fontSize: '11px', fontWeight: '600', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#888', textDecoration: 'none', transition: 'color 0.2s' }} onMouseOver={e => e.target.style.color = '#fff'} onMouseOut={e => e.target.style.color = '#888'}>How It Works</a>
           <a href="#pricing" className="nav-link" style={{ fontSize: '11px', fontWeight: '600', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#888', textDecoration: 'none', transition: 'color 0.2s' }} onMouseOver={e => e.target.style.color = '#fff'} onMouseOut={e => e.target.style.color = '#888'}>Pricing</a>
+          <a href="#faq" className="nav-link" style={{ fontSize: '11px', fontWeight: '600', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#888', textDecoration: 'none', transition: 'color 0.2s' }} onMouseOver={e => e.target.style.color = '#fff'} onMouseOut={e => e.target.style.color = '#888'}>FAQ</a>
           <a href={user ? "/app" : "/login"} className="btn-cta" style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#fff', color: '#000', padding: '10px 20px', borderRadius: '6px', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.06em', textDecoration: 'none', transition: 'all 0.2s' }}>
             {user ? "Go to Dashboard" : "Open App"}
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -179,6 +181,7 @@ export default function LandingPage() {
       >
         <a href="#features" onClick={() => setMobileMenuOpen(false)} style={{ fontSize: '20px', fontWeight: '700', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#fff', textDecoration: 'none' }}>Features</a>
         <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} style={{ fontSize: '20px', fontWeight: '700', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#fff', textDecoration: 'none' }}>How It Works</a>
+        <a href="#faq" onClick={() => setMobileMenuOpen(false)} style={{ fontSize: '20px', fontWeight: '700', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#fff', textDecoration: 'none' }}>FAQ</a>
         <a href={user ? "/app" : "/login"} onClick={() => setMobileMenuOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#fff', color: '#000', padding: '14px 28px', borderRadius: '8px', fontSize: '14px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.06em', textDecoration: 'none', marginTop: '16px' }}>
           {user ? "Go to Dashboard" : "Open App"}
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -199,7 +202,7 @@ export default function LandingPage() {
           <div style={{ display:'flex', alignItems:'flex-end', justifyContent:'space-between', marginTop:'48px', flexWrap:'wrap', gap:'32px' }}>
             <div style={{ maxWidth:'440px' }}>
               <p className="body-text" style={{ fontSize:'18px', marginBottom:'32px' }}>
-                Assure is the premium warranty tracker built for people who buy things worth protecting. Add once, never lose coverage again.
+                Every warranty you own in one place. Assure tracks what's still covered, counts down what's running out, and tells you before a claim window closes.
               </p>
               <div style={{ display:'flex', alignItems:'center', gap:'12px', flexWrap:'wrap' }}>
                 <a href={user ? "/app" : "/login"} className="btn-cta">
@@ -325,7 +328,7 @@ export default function LandingPage() {
               {/* As percentages: left=3.19%, top=2.35%, width=93.62%, height=95.29% */}
               <div style={{ width:'940px', height:'680px', position:'relative' }}>
 
-                {/* iPad PNG — behind the content, bezels frame the screen area visually */}
+                {/* iPad PNG, behind the content, bezels frame the screen area visually */}
                 <img
                   src="/ipad_landscape.png"
                   alt="iPad Pro"
@@ -333,7 +336,7 @@ export default function LandingPage() {
                   style={{ position:'absolute', inset:0, width:'100%', height:'100%', pointerEvents:'none', zIndex:1 }}
                 />
 
-                {/* Screen content — on top of the PNG, fills exactly the screen area (x=30..910 y=16..664) */}
+                {/* Screen content, on top of the PNG, fills exactly the screen area (x=30..910 y=16..664) */}
                 <div style={{
                   position:'absolute',
                   left:'30px', top:'16px', right:'30px', bottom:'16px',
@@ -477,7 +480,7 @@ export default function LandingPage() {
 
                   </div>{/* end screen content */}
 
-                  {/* ── Demo FAB: File a Claim — pinned to screen corner ── */}
+                  {/* ── Demo FAB: File a Claim, pinned to screen corner ── */}
                   <div style={{ position:'absolute', bottom:'20px', right:'20px', zIndex:20, display:'inline-flex', alignItems:'center', gap:'9px', background:'#fff', borderRadius:'14px', color:'#000', fontSize:'13px', fontWeight:700, padding:'13px 20px', boxShadow:'0 4px 24px rgba(0,0,0,0.3), 0 1px 4px rgba(0,0,0,0.15)', fontFamily:'Inter, sans-serif', letterSpacing:'0.01em', cursor:'default' }}>
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                     File a Claim
@@ -527,7 +530,7 @@ export default function LandingPage() {
               </svg>
             </div>
             <div className="feature-title">Universal Tracking</div>
-            <div className="feature-desc">Track warranties across every product category, from sneakers to refrigerators to cars. If you bought it, Assure protects it.</div>
+            <div className="feature-desc">Track warranties across every product category, from sneakers to refrigerators to cars. If you bought it, Assure keeps a record of it.</div>
           </div>
 
           <div className="feature-card reveal reveal-delay-1">
@@ -641,7 +644,7 @@ export default function LandingPage() {
               </svg>
             </div>
             <div className="step-number">03</div>
-            <div style={{ fontSize:'18px', fontWeight:'800', letterSpacing:'-0.02em', marginBottom:'12px' }}>Stay Protected</div>
+            <div style={{ fontSize:'18px', fontWeight:'800', letterSpacing:'-0.02em', marginBottom:'12px' }}>Never Miss a Claim</div>
             <div className="feature-desc">Assure tracks your coverage, alerts you when warranties are about to expire, and keeps your entire collection organized.</div>
           </div>
 
@@ -759,8 +762,7 @@ export default function LandingPage() {
         <div className="eyebrow" style={{ marginBottom:'20px' }}>Pricing</div>
         <div style={{ display:'flex', alignItems:'flex-end', justifyContent:'space-between', flexWrap:'wrap', gap:'16px', marginBottom:'48px' }}>
           <h2 className="headline-lg">Simple, honest<br/>pricing.</h2>
-          <div style={{ display:'inline-flex', alignItems:'center', gap:'8px', border:'1px solid #2a2a2a', borderRadius:'100px', padding:'6px 16px 6px 10px', background:'rgba(255,255,255,0.03)' }}>
-            <span style={{ width:'6px', height:'6px', borderRadius:'50%', background:'#f59e0b', boxShadow:'0 0 8px #f59e0b', display:'inline-block' }} />
+          <div style={{ display:'inline-flex', alignItems:'center', gap:'8px', border:'1px solid #2a2a2a', borderRadius:'100px', padding:'6px 16px', background:'rgba(255,255,255,0.03)' }}>
             <span style={{ fontSize:'11px', fontWeight:'700', letterSpacing:'0.15em', textTransform:'uppercase', color:'#888' }}>Paid plans coming soon</span>
           </div>
         </div>
@@ -771,11 +773,11 @@ export default function LandingPage() {
               features:['Up to 5 warranties','3 AI receipt scans / month','1 claim session / month','Expiry countdown and alerts'],
             },
             {
-              key:'protect', name:'Protect', price:'$3.99', sub:'per month', cta:'Coming soon', href:null, ctaStyle:{ background:'#1a1a1a', color:'#444', border:'1px solid #2a2a2a' }, highlighted:false,
+              key:'plus', name:'Plus', price:'$3.99', sub:'per month', cta:'Coming soon', href:null, ctaStyle:{ background:'#1a1a1a', color:'#444', border:'1px solid #2a2a2a' }, highlighted:false,
               features:['Up to 30 warranties','20 AI receipt scans / month','10 claim sessions / month','Expiry alerts (30 day)','Coverage progress tracking'],
             },
             {
-              key:'protectPlus', name:'Protect+', price:'$6.99', sub:'per month', cta:'Coming soon', href:null, ctaStyle:{ background:'#f0f0f0', color:'#999', border:'none' }, highlighted:true,
+              key:'unlimited', name:'Unlimited', price:'$6.99', sub:'per month', cta:'Coming soon', href:null, ctaStyle:{ background:'#f0f0f0', color:'#999', border:'none' }, highlighted:true,
               features:['Unlimited warranties','Unlimited AI receipt scans','Unlimited claim sessions','Priority support','Family sharing (up to 5)'],
             },
           ].map((plan) => (
@@ -837,13 +839,64 @@ export default function LandingPage() {
 
       <hr className="divider" />
 
+      {/* FAQ */}
+      <section id="faq">
+        <div className="reveal" style={{ marginBottom:'64px', textAlign:'center' }}>
+          <div className="eyebrow" style={{ marginBottom:'16px' }}>Questions</div>
+          <h2 className="headline-lg">Straight<br/>answers.</h2>
+        </div>
+
+        <div className="reveal" style={{ maxWidth:'760px', margin:'0 auto', borderTop:'1px solid #1a1a1a' }}>
+          {[
+            {
+              q: 'What does Assure actually do?',
+              a: 'It keeps a record of everything you own that is still under warranty, shows you how much of each coverage window is left, and reminds you before one runs out so you can claim while you still can.',
+            },
+            {
+              q: 'What can I upload?',
+              a: 'Photos and images of receipts. Point your camera at a receipt and the AI scanner reads the product, brand, purchase date, price, and retailer, then fills the form for you to check.',
+            },
+            {
+              q: 'How do expiry alerts work?',
+              a: 'Turn on browser notifications and Assure warns you before a warranty lapses, 30 days ahead by default, and you can change how much notice you get.',
+            },
+            {
+              q: 'What do I get for free?',
+              a: 'Five warranties, three AI receipt scans a month, and one claim assistant session a month. No card required.',
+            },
+            {
+              q: 'Who can see my warranty data?',
+              a: 'Only you. Records are readable solely by the account that created them, enforced at the database level rather than only in the app.',
+            },
+          ].map((item, i) => (
+            <div key={i} style={{ borderBottom:'1px solid #1a1a1a' }}>
+              <button
+                onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                aria-expanded={openFaq === i}
+                style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'24px', width:'100%', padding:'26px 4px', background:'none', border:'none', cursor:'pointer', textAlign:'left', color:'#fff', font:'inherit' }}
+              >
+                <span style={{ fontSize:'17px', fontWeight:'700', letterSpacing:'-0.02em' }}>{item.q}</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" style={{ flexShrink:0, transition:'transform 0.25s ease', transform: openFaq === i ? 'rotate(45deg)' : 'none' }}>
+                  <path d="M12 5v14M5 12h14"/>
+                </svg>
+              </button>
+              {openFaq === i && (
+                <div className="feature-desc" style={{ padding:'0 48px 26px 4px', maxWidth:'620px' }}>{item.a}</div>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <hr className="divider" />
+
       {/* FINAL CTA */}
       <section>
         <div className="cta-section reveal">
           <div className="cta-bg-text">Assure</div>
           <div style={{ position:'relative', zIndex:'1' }}>
             <h2 className="headline-lg" style={{ color:'#000', marginBottom:'20px', maxWidth:'700px', marginLeft:'auto', marginRight:'auto' }}>
-              Start protecting<br/>what you own.
+              Never miss<br/>another claim.
             </h2>
             <p style={{ fontSize:'17px', color:'#777', marginBottom:'40px', maxWidth:'420px', marginLeft:'auto', marginRight:'auto', lineHeight:'1.6' }}>
               Start tracking your warranties in minutes. Free to use.

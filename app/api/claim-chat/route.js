@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import { adminAuth, adminDb } from '../../../lib/firebase-admin';
 
-const CLAIM_LIMIT = 1; // Free plan — messages per month
+const CLAIM_LIMIT = 1; // Free plan, messages per month
 const AI_GATEWAY_URL = process.env.AI_GATEWAY_URL || 'https://ai-gateway.vercel.sh/v1';
-const CLAIM_MODEL = process.env.MISTRAL_CHAT_MODEL || 'mistral/devstral-2';
+const CLAIM_MODEL = process.env.CHAT_MODEL || 'mistral/mistral-medium-3.5';
 
 function stripMarkdown(text) {
   return text
@@ -19,7 +19,7 @@ function stripMarkdown(text) {
     .replace(/^\s*\d+\.\s+/gm, '')           // numbered list markers
     .replace(/\[(.+?)\]\(.+?\)/g, '$1')      // links → just label
     .replace(/!\[.*?\]\(.+?\)/g, '')         // images
-    .replace(/^[-_*]{3,}$/gm, '—')           // horizontal rules
+    .replace(/^[-_*]{3,}$/gm, '')            // horizontal rules
     .replace(/\n{3,}/g, '\n\n')              // collapse excess newlines
     .trim();
 }

@@ -7,11 +7,6 @@ service cloud.firestore {
     function scanLimit()     { return 3; }
     function claimLimit()    { return 1; }
 
-    function currentMonth() {
-      // Returns the current month key in "YYYY-MM" format
-      return string(request.time.toMillis()).slice(0, 7); // approximation
-    }
-
     // ── User profiles ────────────────────────────────────────────────────────
     match /users/{userId} {
       allow read: if request.auth != null && request.auth.uid == userId;
