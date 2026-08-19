@@ -60,7 +60,7 @@ export default function TermsPage() {
           <p style={pStyle}>To the extent permitted by law, we are not liable for indirect or consequential losses, and that expressly includes the value of a warranty claim you missed, were denied, or couldn't pursue. Our total liability to you is capped at the greater of what you paid us in the previous 12 months or $50. Nothing here limits liability that can't be limited by law.</p>
 
           <h2 style={h2Style}>11. Governing law</h2>
-          <p style={pStyle}>These Terms are governed by the laws of [JURISDICTION], and you agree the courts of [JURISDICTION] have exclusive jurisdiction over any dispute arising from them, without regard to conflict of law rules.</p>
+          <p style={pStyle}>These Terms are governed by the laws of the State of California and the laws of the United States that apply there, without regard to conflict of law rules. You agree that the state and federal courts located in California have exclusive jurisdiction over any dispute arising from these Terms or your use of Assure.</p>
 
           <h2 style={h2Style}>12. Changes to these Terms</h2>
           <p style={pStyle}>We may update these Terms. If a change is material, we'll give you at least 14 days' notice by posting the updated Terms here with a new date, and continuing to use Assure after that means you accept them.</p>
