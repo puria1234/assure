@@ -53,11 +53,10 @@ export default function PrivacyPage() {
             <li style={liStyle}><strong style={{ color:'#bbb' }}>Credentials never held in the clear:</strong> passwords are hashed by Google's authentication service, so neither we nor Google can read them</li>
             <li style={liStyle}><strong style={{ color:'#bbb' }}>Independent auditing:</strong> the platform is assessed against recognised standards such as ISO/IEC 27001 and SOC 2 by outside auditors</li>
           </ul>
-          <p style={pStyle}>Some parts of Assure necessarily run elsewhere. The application itself is hosted on Vercel, which also holds uploaded receipt images in private storage, and the AI features send content to an external model provider as described in the next section.</p>
           <p style={pStyle}>We may also disclose information where the law requires it, or where it is necessary to protect the service, our rights, or someone's safety.</p>
 
           <h2 style={h2Style}>4. How AI features handle your data</h2>
-          <p style={pStyle}>This is worth being specific about. When you scan a receipt, the image is sent to an external AI provider to be read. When you use the claim assistant, your messages and the warranty details relevant to that claim are sent the same way. This happens only when you actively use those features, and it is the only time your content leaves our own storage.</p>
+          <p style={pStyle}>When you scan a receipt, the image is sent to an external AI provider to be read. When you use the claim assistant, your messages and the warranty details relevant to that claim are sent the same way. This happens only when you actively use those features, and it is the only time your content leaves our own storage.</p>
           <p style={pStyle}>We do not use your content to train AI models, and we do not permit our providers to train on it either.</p>
 
           <h2 style={h2Style}>5. Security</h2>
