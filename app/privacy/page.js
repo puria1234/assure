@@ -41,13 +41,19 @@ export default function PrivacyPage() {
           </ul>
           <p style={pStyle}>We do not use your data for advertising, and we do not build profiles of you.</p>
 
-          <h2 style={h2Style}>3. Who processes your data</h2>
-          <p style={pStyle}>We do not sell or rent your personal information, and we never share it with other users. We rely on a small number of providers to operate Assure, and each only handles what its job requires:</p>
+          <h2 style={h2Style}>3. Where your data is stored</h2>
+          <p style={pStyle}>We do not sell or rent your personal information, and we never share it with other users. Your account and your warranty records live in Google Cloud database systems, run through Firebase, so the day to day safety of your data rests on infrastructure Google secures and audits rather than on servers we maintain ourselves.</p>
+          <p style={pStyle}>Measures Google applies to data held on that infrastructure include:</p>
           <ul style={{ paddingLeft:'24px', marginBottom:'16px' }}>
-            <li style={liStyle}><strong style={{ color:'#bbb' }}>Google Firebase:</strong> account authentication and the database holding your warranty records</li>
-            <li style={liStyle}><strong style={{ color:'#bbb' }}>Vercel:</strong> hosting the application, and storing uploaded receipt images in private blob storage</li>
-            <li style={liStyle}><strong style={{ color:'#bbb' }}>Vercel AI Gateway and Mistral AI:</strong> running the models behind receipt scanning and the claim assistant</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Encryption at rest by default:</strong> stored data is split into chunks, each encrypted with its own key, and those keys are themselves encrypted with regularly rotated master keys</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Encryption in transit:</strong> traffic is encrypted between you and Google, and again as it moves between Google data centres over their own private network rather than the public internet</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Purpose built hardware:</strong> servers use custom security chips and a verified boot process, so a machine that has been tampered with will not be trusted with data</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Physical data centre security:</strong> access is tightly restricted through layered controls including biometric checks, and very few staff ever enter the floors where data is held</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Replication across locations:</strong> records are copied across multiple physically separate zones, so a single failure does not lose your data</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Credentials never held in the clear:</strong> passwords are hashed by Google's authentication service, so neither we nor Google can read them</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Independent auditing:</strong> the platform is assessed against recognised standards such as ISO/IEC 27001 and SOC 2 by outside auditors</li>
           </ul>
+          <p style={pStyle}>Some parts of Assure necessarily run elsewhere. The application itself is hosted on Vercel, which also holds uploaded receipt images in private storage, and the AI features send content to an external model provider as described in the next section.</p>
           <p style={pStyle}>We may also disclose information where the law requires it, or where it is necessary to protect the service, our rights, or someone's safety.</p>
 
           <h2 style={h2Style}>4. How AI features handle your data</h2>
