@@ -84,13 +84,7 @@ export default function PrivacyPage() {
           </ul>
           <p style={pStyle}>Depending on where you live, you may have further rights under laws such as the GDPR or the CCPA, including the right to object to processing or to complain to your local data protection authority.</p>
 
-          <h2 style={h2Style}>8. Children</h2>
-          <p style={pStyle}>Assure is not intended for anyone under 16, and we do not knowingly collect their data. If we learn that we have, we will delete it.</p>
-
-          <h2 style={h2Style}>9. International transfers</h2>
-          <p style={pStyle}>Our providers operate globally, so your data may be processed in countries other than your own, including the United States. Where that happens, we rely on our providers' standard safeguards for international transfers.</p>
-
-          <h2 style={h2Style}>10. Changes to this policy</h2>
+          <h2 style={h2Style}>8. Changes to this policy</h2>
           <p style={pStyle}>We will post any update here with a new date, and we will give at least 14 days' notice before a material change takes effect.</p>
 
         </main>
