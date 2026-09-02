@@ -2,20 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { auth, db } from '../../lib/firebase';
-import {
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  sendPasswordResetEmail,
-  updateProfile,
-  GoogleAuthProvider,
-  signInWithPopup,
-  setPersistence,
-  browserLocalPersistence,
-  browserSessionPersistence
-} from 'firebase/auth';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { authClient } from '@/lib/auth/client';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -33,10 +20,11 @@ export default function LoginPage() {
   const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user) => {
-      if (user) router.push('/app');
-    });
-    return () => unsub();
+    let cancelled = false;
+    authClient.getSession()
+      .then(({ data }) => { if (!cancelled && data?.user) router.push('/app'); })
+      .catch(() => {});
+    return () => { cancelled = true; };
   }, [router]);
 
   const checkStrength = (pw) => {
@@ -48,19 +36,25 @@ export default function LoginPage() {
     setStrengthScore(score);
   };
 
-  const getFirebaseError = (code) => {
+  // Neon Auth returns Better Auth error codes, not Firebase ones.
+  const getAuthError = (err) => {
+    const code = err?.code || err?.error?.code || '';
     switch (code) {
-      case 'auth/user-not-found': return 'No account found with this email.';
-      case 'auth/wrong-password': return 'Incorrect password. Please try again.';
-      case 'auth/invalid-credential': return 'Invalid email or password.';
-      case 'auth/email-already-in-use': return 'An account with this email already exists.';
-      case 'auth/weak-password': return 'Password must be at least 6 characters.';
-      case 'auth/invalid-email': return 'Please enter a valid email address.';
-      case 'auth/too-many-requests': return 'Too many attempts. Please try again later.';
-      case 'auth/network-request-failed': return 'Network error. Check your connection.';
-      case 'auth/operation-not-allowed': return 'Email/password sign-in is not enabled. Go to Firebase Console → Authentication → Sign-in method → Email/Password and enable it.';
-      case 'auth/admin-restricted-operation': return 'Sign-up is currently disabled. Enable Email/Password in Firebase Console → Authentication → Sign-in method.';
-      default: return 'Something went wrong. Please try again.';
+      case 'INVALID_EMAIL_OR_PASSWORD':
+      case 'INVALID_PASSWORD':
+      case 'USER_NOT_FOUND':
+        return 'Invalid email or password.';
+      case 'USER_ALREADY_EXISTS':
+      case 'USER_EMAIL_ALREADY_EXISTS':
+        return 'An account with this email already exists.';
+      case 'PASSWORD_TOO_SHORT':
+        return 'Password must be at least 6 characters.';
+      case 'INVALID_EMAIL':
+        return 'Please enter a valid email address.';
+      case 'TOO_MANY_REQUESTS':
+        return 'Too many attempts. Please try again later.';
+      default:
+        return err?.message || 'Something went wrong. Please try again.';
     }
   };
 
@@ -69,11 +63,11 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
     try {
-      await setPersistence(auth, rememberMe ? browserLocalPersistence : browserSessionPersistence);
-      await signInWithEmailAndPassword(auth, email, password);
+      const { error: authError } = await authClient.signIn.email({ email, password, rememberMe });
+      if (authError) throw authError;
       router.push('/app');
     } catch (err) {
-      setError(getFirebaseError(err.code));
+      setError(getAuthError(err));
     } finally {
       setLoading(false);
     }
@@ -87,18 +81,11 @@ export default function LoginPage() {
     if (password.length < 6) { setError('Password must be at least 6 characters.'); return; }
     setLoading(true);
     try {
-      const cred = await createUserWithEmailAndPassword(auth, email, password);
-      await updateProfile(cred.user, { displayName: name });
-      // Create Firestore user profile
-      await setDoc(doc(db, 'users', cred.user.uid), {
-        name,
-        email,
-        notificationPrefs: { enabled: false, daysBefore: 30 },
-        createdAt: serverTimestamp()
-      });
+      const { error: authError } = await authClient.signUp.email({ email, password, name });
+      if (authError) throw authError;
       router.push('/app');
     } catch (err) {
-      setError(getFirebaseError(err.code));
+      setError(getAuthError(err));
     } finally {
       setLoading(false);
     }
@@ -110,41 +97,33 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
     try {
-      await sendPasswordResetEmail(auth, email);
+      const { error: authError } = await authClient.requestPasswordReset({
+        email,
+        redirectTo: `${window.location.origin}/login`,
+      });
+      if (authError) throw authError;
       setSuccessMsg('Password reset email sent. Check your inbox.');
     } catch (err) {
-      setError(getFirebaseError(err.code));
+      setError(getAuthError(err));
     } finally {
       setLoading(false);
     }
   };
 
+
   const handleGoogleLogin = async () => {
     setError('');
     setLoading(true);
     try {
-      const provider = new GoogleAuthProvider();
-      const cred = await signInWithPopup(auth, provider);
-      // Create Firestore profile if first time
-      const { doc: firestoreDoc, getDoc: firestoreGetDoc } = await import('firebase/firestore');
-      const profileRef = firestoreDoc(db, 'users', cred.user.uid);
-      const snap = await firestoreGetDoc(profileRef);
-      if (!snap.exists()) {
-        await import('firebase/firestore').then(({ setDoc, serverTimestamp }) =>
-          setDoc(profileRef, {
-            name: cred.user.displayName || cred.user.email.split('@')[0],
-            email: cred.user.email,
-            notificationPrefs: { enabled: false, daysBefore: 30 },
-            createdAt: serverTimestamp()
-          })
-        );
-      }
-      router.push('/app');
+      // Redirects to Google, then back to /app once Neon Auth completes the
+      // exchange. Nothing after this runs on the success path.
+      const { error: authError } = await authClient.signIn.social({
+        provider: 'google',
+        callbackURL: `${window.location.origin}/app`,
+      });
+      if (authError) throw authError;
     } catch (err) {
-      if (err.code !== 'auth/popup-closed-by-user') {
-        setError(getFirebaseError(err.code));
-      }
-    } finally {
+      setError(getAuthError(err));
       setLoading(false);
     }
   };

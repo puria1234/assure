@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../lib/firebase';
+import { authClient } from '@/lib/auth/client';
 
 function PreviewCategoryIcon({ category }) {
   const props = {
@@ -42,10 +41,11 @@ export default function LandingPage() {
   const ipadInnerRef = useRef(null);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-    });
-    return () => unsub();
+    let cancelled = false;
+    authClient.getSession()
+      .then(({ data }) => { if (!cancelled) setUser(data?.user ?? null); })
+      .catch(() => {});
+    return () => { cancelled = true; };
   }, []);
 
   useEffect(() => {

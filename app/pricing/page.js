@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../../lib/firebase';
+import { authClient } from '@/lib/auth/client';
 import { PLANS } from '../../lib/plans';
 
 const CHECK_ICON = (
@@ -15,8 +14,11 @@ export default function PricingPage() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (u) => setUser(u));
-    return () => unsub();
+    let cancelled = false;
+    authClient.getSession()
+      .then(({ data }) => { if (!cancelled) setUser(data?.user ?? null); })
+      .catch(() => {});
+    return () => { cancelled = true; };
   }, []);
 
   return (

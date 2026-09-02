@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
-import { adminAuth, adminDb } from '../../../lib/firebase-admin';
+import { getSessionUser, monthKey } from '../../../lib/session';
+import { queryOne } from '../../../lib/db';
+import { LIMITS } from '../../../lib/warranties';
 
-const SCAN_LIMIT = 3; // Free plan
+const SCAN_LIMIT = LIMITS.scans;
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 const AI_GATEWAY_URL = process.env.AI_GATEWAY_URL || 'https://ai-gateway.vercel.sh/v1';
 const VISION_MODEL = process.env.VISION_MODEL || 'mistral/mistral-medium-3.5';
@@ -57,23 +59,16 @@ Return ONLY the raw JSON object. No markdown fences, no explanation, no extra te
 
 export async function POST(request) {
   try {
-    // Verify auth token
-    const authHeader = request.headers.get('authorization') || '';
-    const idToken = authHeader.replace('Bearer ', '');
-    if (!idToken) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 });
-
-    let uid;
-    try {
-      const decoded = await adminAuth.verifyIdToken(idToken);
-      uid = decoded.uid;
-    } catch {
-      return NextResponse.json({ error: 'Unauthorised' }, { status: 401 });
-    }
+    const user = await getSessionUser();
+    if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 });
 
     // Enforce scan limit
-    const monthKey = new Date().toISOString().slice(0, 7);
-    const userSnap = await adminDb.collection('users').doc(uid).get();
-    const scanCount = userSnap.exists ? (userSnap.data()?.scanCounts?.[monthKey] || 0) : 0;
+    const month = monthKey();
+    const existing = await queryOne(
+      'SELECT count FROM usage_counters WHERE user_id = $1 AND month = $2 AND kind = $3',
+      [user.id, month, 'scan']
+    );
+    const scanCount = existing?.count ?? 0;
     if (scanCount >= SCAN_LIMIT) {
       return NextResponse.json({ error: `Monthly scan limit reached (${SCAN_LIMIT}/month). Resets next month.` }, { status: 429 });
     }
@@ -113,7 +108,17 @@ export async function POST(request) {
     }
 
     const extracted = JSON.parse(jsonMatch[0]);
-    return NextResponse.json({ success: true, data: extracted });
+
+    // Only charge a scan once the model actually returned usable data.
+    const updated = await queryOne(
+      `INSERT INTO usage_counters (user_id, month, kind, count) VALUES ($1, $2, 'scan', 1)
+       ON CONFLICT (user_id, month, kind)
+       DO UPDATE SET count = usage_counters.count + 1
+         RETURNING count`,
+      [user.id, month]
+    );
+
+    return NextResponse.json({ success: true, data: extracted, scanCount: updated.count });
   } catch (err) {
     console.error('scan-receipt error:', err);
     return NextResponse.json({ error: err.message || 'Unknown error' }, { status: 500 });

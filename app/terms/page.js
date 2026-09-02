@@ -41,7 +41,7 @@ export default function TermsPage() {
           </ul>
 
           <h2 style={h2Style}>5. Your content stays yours</h2>
-          <p style={pStyle}>You keep all rights to the warranty records, receipt images, and messages you put into Assure. You grant us only the narrow licence we need to actually run the service for you: to store your content, display it back to you, and pass it to the processors described in our <a href="/privacy" style={{ color:'#999' }}>Privacy Policy</a> so features like receipt scanning can work. We don't use your content to train AI models, and we don't sell it.</p>
+          <p style={pStyle}>You keep all rights to the warranty records, receipt images, and messages you put into Assure. You grant us only the narrow licence we need to actually run the service for you: to store your content, display it back to you, and pass it to the service providers described in our <a href="/privacy" style={{ color:'#999' }}>Privacy Policy</a> so features like receipt scanning can work. We don't use your content to train AI models, and we don't sell it.</p>
 
           <h2 style={h2Style}>6. AI features come with limits</h2>
           <p style={pStyle}>Receipt scanning and the claim assistant are conveniences, not authorities. They are built on language models that make mistakes, misread images, and state wrong things confidently. Nothing either feature produces is legal, financial, or professional advice. Check anything that matters against the original receipt or warranty document before relying on it.</p>

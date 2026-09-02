@@ -40,10 +40,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Firebase service account keys (NEVER commit these)
-scripts/serviceAccountKey.json
-*serviceAccount*.json
-firebase-adminsdk-*.json
 
 # playwright-mcp scratch output
 .playwright-mcp/

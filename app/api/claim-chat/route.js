@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
-import { adminAuth, adminDb } from '../../../lib/firebase-admin';
+import { getSessionUser, monthKey } from '../../../lib/session';
+import { queryOne } from '../../../lib/db';
+import { LIMITS } from '../../../lib/warranties';
 
-const CLAIM_LIMIT = 1; // Free plan, messages per month
+const CLAIM_LIMIT = LIMITS.claims; // Free plan, claim sessions per month
 const AI_GATEWAY_URL = process.env.AI_GATEWAY_URL || 'https://ai-gateway.vercel.sh/v1';
 const CLAIM_MODEL = process.env.CHAT_MODEL || 'mistral/mistral-medium-3.5';
 
@@ -26,28 +28,26 @@ function stripMarkdown(text) {
 
 export async function POST(request) {
   try {
-    // Verify auth token
-    const authHeader = request.headers.get('authorization') || '';
-    const idToken = authHeader.replace('Bearer ', '');
-    if (!idToken) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 });
-
-    let uid;
-    try {
-      const decoded = await adminAuth.verifyIdToken(idToken);
-      uid = decoded.uid;
-    } catch {
-      return NextResponse.json({ error: 'Unauthorised' }, { status: 401 });
-    }
-
-    // Enforce claim limit
-    const monthKey = new Date().toISOString().slice(0, 7);
-    const userSnap = await adminDb.collection('users').doc(uid).get();
-    const claimCount = userSnap.exists ? (userSnap.data()?.claimCounts?.[monthKey] || 0) : 0;
-    if (claimCount >= CLAIM_LIMIT) {
-      return NextResponse.json({ error: `Monthly claim limit reached (${CLAIM_LIMIT}/month). Resets next month.` }, { status: 429 });
-    }
+    const user = await getSessionUser();
+    if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 });
 
     const { messages, warrantyContext } = await request.json();
+
+    // The limit counts claim *sessions*, not messages. Only the opening message
+    // of a conversation is charged, so follow-up questions stay free. The old
+    // client incremented on every message, which meant a limit of 1 allowed
+    // exactly one message and then blocked the rest of the conversation.
+    const month = monthKey();
+    const isNewSession = (messages || []).filter((m) => m.role === 'user').length <= 1;
+
+    const existing = await queryOne(
+      'SELECT count FROM usage_counters WHERE user_id = $1 AND month = $2 AND kind = $3',
+      [user.id, month, 'claim']
+    );
+    const claimCount = existing?.count ?? 0;
+    if (isNewSession && claimCount >= CLAIM_LIMIT) {
+      return NextResponse.json({ error: `Monthly claim limit reached (${CLAIM_LIMIT}/month). Resets next month.` }, { status: 429 });
+    }
 
     const {
       productName = 'Unknown product',
@@ -121,7 +121,19 @@ INSTRUCTIONS:
       : (typeof content === 'string' ? content : '');
     const clean = stripMarkdown(raw);
 
-    return NextResponse.json({ success: true, message: clean });
+    let claimTotal = claimCount;
+    if (isNewSession) {
+      const updated = await queryOne(
+        `INSERT INTO usage_counters (user_id, month, kind, count) VALUES ($1, $2, 'claim', 1)
+         ON CONFLICT (user_id, month, kind)
+         DO UPDATE SET count = usage_counters.count + 1
+           RETURNING count`,
+        [user.id, month]
+      );
+      claimTotal = updated.count;
+    }
+
+    return NextResponse.json({ success: true, message: clean, claimCount: claimTotal });
   } catch (err) {
     console.error('claim-chat error:', err);
     return NextResponse.json({ error: err.message || 'Unknown error' }, { status: 500 });

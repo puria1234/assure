@@ -2,14 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { auth, db } from '../../lib/firebase';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
-import {
-  collection, addDoc, updateDoc, deleteDoc, doc,
-  query, where, onSnapshot, getDoc, setDoc, serverTimestamp,
-  runTransaction, increment
-} from 'firebase/firestore';
-
+import { authClient } from '@/lib/auth/client';
 // ── downscale image for AI scan (Vercel Functions cap request bodies at 4.5MB) ─
 async function resizeImageForScan(file, maxDimension = 1600, quality = 0.8) {
   const dataUrl = await new Promise((resolve, reject) => {
@@ -115,6 +108,7 @@ function CategoryIcon({ cat }) {
 }
 
 const EMPTY_FORM = { productName:'', brand:'', category:'', purchaseDate:'', expiryDate:'', price:'', retailer:'', serial:'', notes:'', receiptUrl:'', receiptBase64:'', receiptName:'' };
+
 
 export default function AppPage() {
   const router = useRouter();
@@ -246,76 +240,57 @@ export default function AppPage() {
     animCount('expired', expired);
   };
 
-  // ── Subscribe to warranties (real-time) ───────────────────────────────────
-  const subscribeWarranties = (uid) => {
-    if (unsubWarrantiesRef.current) unsubWarrantiesRef.current();
-    const q = query(collection(db, 'warranties'), where('userId', '==', uid));
-    unsubWarrantiesRef.current = onSnapshot(
-      q,
-      (snap) => {
-        const list = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        setWarranties(list);
-        updateStats(list);
-      },
-      (err) => {
-        console.error('Warranties listener error:', err);
-        if (!isSigningOutRef.current) {
-          showToast('Could not load warranties. Check Firestore rules.', 'error');
-        }
-      }
-    );
+  // ── Load warranties ────────────────────────────────────────────────────────
+  // Postgres has no realtime listener, so the list is loaded on mount and
+  // refetched after each mutation rather than streaming.
+  const loadWarranties = async () => {
+    try {
+      const res = await fetch('/api/warranties');
+      if (!res.ok) throw new Error('request failed');
+      const { warranties: list } = await res.json();
+      setWarranties(list);
+      updateStats(list);
+      return list;
+    } catch (err) {
+      console.error('loadWarranties error:', err);
+      if (!isSigningOutRef.current) showToast('Could not load warranties.', 'error');
+      return null;
+    }
   };
 
   // ── Auth state ─────────────────────────────────────────────────────────────
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        router.push('/login');
-        return;
-      }
-      setCurrentUser(user);
-      // Load user profile from Firestore
+    let cancelled = false;
+    (async () => {
+      const { data } = await authClient.getSession().catch(() => ({ data: null }));
+      if (cancelled) return;
+      if (!data?.user) { router.push('/login'); return; }
+      setCurrentUser(data.user);
+
       try {
-        const profileRef = doc(db, 'users', user.uid);
-        const profileSnap = await getDoc(profileRef);
-        if (profileSnap.exists()) {
-          const data = profileSnap.data();
-          setUserProfile(data);
-          if (data.notificationPrefs) {
-            const normalizedPrefs = {
-              enabled: !!data.notificationPrefs.enabled,
-              daysBefore: data.notificationPrefs.daysBefore || 30,
-            };
-            setNotifPrefs(normalizedPrefs);
-            setSelectedDaysBefore(normalizedPrefs.daysBefore);
-          }
-          setSettingsForm({ name: data.name || user.displayName || '', password: '' });
-          // Load this month's usage
-          const monthKey = new Date().toISOString().slice(0, 7);
-          setScanMonthlyCount(data.scanCounts?.[monthKey] || 0);
-          setClaimMonthlyCount(data.claimCounts?.[monthKey] || 0);
-        } else {
-          // Create profile if not exists
-          const newProfile = {
-            name: user.displayName || user.email.split('@')[0],
-            email: user.email,
-            notificationPrefs: { enabled: false, daysBefore: 30 },
-            createdAt: serverTimestamp()
+        const res = await fetch('/api/profile');
+        if (res.ok) {
+          const { profile, usage } = await res.json();
+          if (cancelled) return;
+          setUserProfile(profile);
+          const prefs = {
+            enabled: !!profile.notificationPrefs.enabled,
+            daysBefore: profile.notificationPrefs.daysBefore || 30,
           };
-          await setDoc(profileRef, newProfile);
-          setUserProfile(newProfile);
-          setSettingsForm({ name: newProfile.name, password: '' });
+          setNotifPrefs(prefs);
+          setSelectedDaysBefore(prefs.daysBefore);
+          setSettingsForm({ name: profile.name || data.user.name || '', password: '' });
+          setScanMonthlyCount(usage.scan || 0);
+          setClaimMonthlyCount(usage.claim || 0);
         }
       } catch (err) {
         console.error('Error loading profile:', err);
       }
-      try { subscribeWarranties(user.uid); } catch (err) { console.error('subscribeWarranties error:', err); }
-      setLoading(false);
-    });
-    return () => {
-      unsub();
-      if (unsubWarrantiesRef.current) unsubWarrantiesRef.current();
-    };
+
+      await loadWarranties();
+      if (!cancelled) setLoading(false);
+    })();
+    return () => { cancelled = true; };
   }, []);
 
   // ── Click outside user menu ────────────────────────────────────────────────
@@ -332,11 +307,7 @@ export default function AppPage() {
   // ── Logout ─────────────────────────────────────────────────────────────────
   const logout = async () => {
     isSigningOutRef.current = true;
-    if (unsubWarrantiesRef.current) {
-      unsubWarrantiesRef.current();
-      unsubWarrantiesRef.current = null;
-    }
-    await signOut(auth);
+    await authClient.signOut().catch(() => {});
     router.push('/login');
   };
 
@@ -370,10 +341,9 @@ export default function AppPage() {
     setFormError('');
     try {
       const { base64, mimeType } = await resizeImageForScan(receiptFile);
-      const idToken = await currentUser.getIdToken();
       const res = await fetch('/api/scan-receipt', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${idToken}` },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ image: base64, mimeType }),
       });
       if (!res.ok) {
@@ -394,18 +364,8 @@ export default function AppPage() {
         serial:      prev.serial      || d.serial       || '',
         category:    prev.category    || d.category     || '',
       }));
-      // Save updated scan count to Firestore
-      const monthKey = new Date().toISOString().slice(0, 7);
-      const base = monthKey === loadedMonthKeyRef.current ? scanMonthlyCount : 0;
-      if (monthKey !== loadedMonthKeyRef.current) {
-        loadedMonthKeyRef.current = monthKey;
-        setClaimMonthlyCount(0);
-      }
-      const newCount = base + 1;
-      setScanMonthlyCount(newCount);
-      await setDoc(doc(db, 'users', currentUser.uid), {
-        scanCounts: { [monthKey]: newCount }
-      }, { merge: true });
+      // The server owns the counter now and returns the new total.
+      if (typeof json.scanCount === 'number') setScanMonthlyCount(json.scanCount);
       showToast('Receipt scanned. Fields auto-filled.', 'success');
     } catch (err) {
       setFormError(`Scan failed: ${err.message}`);
@@ -434,10 +394,9 @@ export default function AppPage() {
     setClaimInput('');
     setClaimLoading(true);
     try {
-      const idToken = await currentUser.getIdToken();
       const res = await fetch('/api/claim-chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${idToken}` },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           messages: updated,
           warrantyContext: { ...claimWarranty, status: getStatus(claimWarranty) },
@@ -446,18 +405,7 @@ export default function AppPage() {
       if (!res.ok) throw new Error('Request failed');
       const json = await res.json();
       setClaimMessages(prev => [...prev, { role: 'assistant', content: json.message }]);
-      // Save updated claim count to Firestore
-      const monthKey = new Date().toISOString().slice(0, 7);
-      const base = monthKey === loadedMonthKeyRef.current ? claimMonthlyCount : 0;
-      if (monthKey !== loadedMonthKeyRef.current) {
-        loadedMonthKeyRef.current = monthKey;
-        setScanMonthlyCount(0);
-      }
-      const newCount = base + 1;
-      setClaimMonthlyCount(newCount);
-      await setDoc(doc(db, 'users', currentUser.uid), {
-        claimCounts: { [monthKey]: newCount }
-      }, { merge: true });
+      if (typeof json.claimCount === 'number') setClaimMonthlyCount(json.claimCount);
     } catch {
       setClaimMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, I ran into an error. Please try again.' }]);
     } finally {
@@ -495,38 +443,31 @@ export default function AppPage() {
         serial: formData.serial,
         notes: formData.notes,
         receiptUrl,
-        receiptType,
-        userId: currentUser.uid,
-        updatedAt: serverTimestamp()
       };
 
-      const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 15000));
-      if (editingId) {
-        await Promise.race([updateDoc(doc(db, 'warranties', editingId), payload), timeout]);
-        showToast('Warranty updated.', 'success');
-      } else {
-        if (warranties.length >= WARRANTY_LIMIT) {
-          setFormError(`Free plan limit reached (${WARRANTY_LIMIT} warranties). Upgrade to add more.`);
-          setSavingWarranty(false);
-          return;
-        }
-        payload.createdAt = serverTimestamp();
-        const userRef = doc(db, 'users', currentUser.uid);
-        await Promise.race([
-          runTransaction(db, async (tx) => {
-            const userSnap = await tx.get(userRef);
-            const currentCount = userSnap.exists() ? (userSnap.data().warrantyCount || 0) : 0;
-            if (currentCount >= WARRANTY_LIMIT) {
-              throw new Error(`Free plan limit reached (${WARRANTY_LIMIT} warranties).`);
-            }
-            const newWarrantyRef = doc(collection(db, 'warranties'));
-            tx.set(newWarrantyRef, payload);
-            tx.update(userRef, { warrantyCount: increment(1) });
-          }),
-          timeout,
-        ]);
-        showToast('Warranty added.', 'success');
+      // The API enforces the plan limit and ownership; this is only a fast
+      // client-side guard so the user sees the message before a round trip.
+      if (!editingId && warranties.length >= WARRANTY_LIMIT) {
+        setFormError(`Free plan limit reached (${WARRANTY_LIMIT} warranties). Upgrade to add more.`);
+        setSavingWarranty(false);
+        return;
       }
+
+      const res = await fetch(
+        editingId ? `/api/warranties/${editingId}` : '/api/warranties',
+        {
+          method: editingId ? 'PATCH' : 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        }
+      );
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || 'Could not save warranty.');
+      }
+      await loadWarranties();
+      showToast(editingId ? 'Warranty updated.' : 'Warranty added.', 'success');
+
       setShowWarrantyModal(false);
       setEditingId(null);
       setFormData(EMPTY_FORM);
@@ -534,9 +475,7 @@ export default function AppPage() {
       setReceiptPreview(null);
     } catch (err) {
       setUploadingReceipt(false);
-      setFormError(err.message === 'timeout'
-        ? 'Request timed out. Check your internet connection and Firestore rules.'
-        : `Failed to save: ${err.code || err.message || 'unknown error'}`);
+      setFormError(err.message || 'Failed to save warranty.');
       console.error('saveWarranty error:', err);
     } finally {
       setSavingWarranty(false);
@@ -548,11 +487,9 @@ export default function AppPage() {
     if (!pendingDeleteId) return;
     setDeletingWarranty(true);
     try {
-      const userRef = doc(db, 'users', currentUser.uid);
-      await runTransaction(db, async (tx) => {
-        tx.delete(doc(db, 'warranties', pendingDeleteId));
-        tx.update(userRef, { warrantyCount: increment(-1) });
-      });
+      const res = await fetch(`/api/warranties/${pendingDeleteId}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('delete failed');
+      await loadWarranties();
       showToast('Warranty deleted.', 'info');
       setShowDeleteModal(false);
       setPendingDeleteId(null);
@@ -571,11 +508,12 @@ export default function AppPage() {
     const prefs = { enabled: notifPrefs.enabled, daysBefore: selectedDaysBefore };
     setSavingNotifPrefs(true);
     try {
-      const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 10000));
-      await Promise.race([
-        setDoc(doc(db, 'users', currentUser.uid), { notificationPrefs: prefs }, { merge: true }),
-        timeout
-      ]);
+      const res = await fetch('/api/profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ notificationPrefs: prefs }),
+      });
+      if (!res.ok) throw new Error('save failed');
       setNotifPrefs(prefs);
 
       showToast('Notification preferences saved.', 'success');
@@ -583,9 +521,7 @@ export default function AppPage() {
       setTimeout(() => setBellRing(false), 1000);
       setShowNotifModal(false);
     } catch (err) {
-      showToast(err.message === 'timeout'
-        ? 'Request timed out. Check Firestore rules.'
-        : `Failed to save: ${err.code || err.message || 'unknown error'}`, 'error');
+      showToast('Could not save notification preferences.', 'error');
       console.error('saveNotifPrefs error:', err);
     } finally {
       setSavingNotifPrefs(false);
@@ -598,7 +534,12 @@ export default function AppPage() {
     if (!currentUser) return;
     setSavingSettings(true);
     try {
-      await setDoc(doc(db, 'users', currentUser.uid), { name: settingsForm.name }, { merge: true });
+      const res = await fetch('/api/profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: settingsForm.name }),
+      });
+      if (!res.ok) throw new Error('save failed');
       setUserProfile(prev => ({ ...prev, name: settingsForm.name }));
       showToast('Settings saved.', 'success');
       setShowSettingsModal(false);

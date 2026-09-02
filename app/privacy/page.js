@@ -29,7 +29,7 @@ export default function PrivacyPage() {
             <li style={liStyle}>Messages you send to the AI claim assistant</li>
             <li style={liStyle}>Basic account settings, such as your notification preferences</li>
           </ul>
-          <p style={pStyle}>We never see or store your password. Sign in is handled by Firebase Authentication, and Google sign in gives us only your name and email address.</p>
+          <p style={pStyle}>We never see or store your password. Sign in is handled by Neon Auth, which stores only a hashed form of it.</p>
 
           <h2 style={h2Style}>2. How we use it</h2>
           <ul style={{ paddingLeft:'24px', marginBottom:'16px' }}>
@@ -42,16 +42,15 @@ export default function PrivacyPage() {
           <p style={pStyle}>We do not use your data for advertising, and we do not build profiles of you.</p>
 
           <h2 style={h2Style}>3. Where your data is stored</h2>
-          <p style={pStyle}>We do not sell or rent your personal information, and we never share it with other users. Your account and your warranty records live in Google Cloud database systems, run through Firebase, so the day to day safety of your data rests on infrastructure Google secures and audits rather than on servers we maintain ourselves.</p>
-          <p style={pStyle}>Measures Google applies to data held on that infrastructure include:</p>
+          <p style={pStyle}>We do not sell or rent your personal information, and we never share it with other users. Your account and your warranty records live in a Neon Postgres database, so the day to day safety of your data rests on infrastructure Neon secures and audits rather than on servers we maintain ourselves.</p>
+          <p style={pStyle}>Measures that apply to data held there include:</p>
           <ul style={{ paddingLeft:'24px', marginBottom:'16px' }}>
-            <li style={liStyle}><strong style={{ color:'#bbb' }}>Encryption at rest by default:</strong> stored data is split into chunks, each encrypted with its own key, and those keys are themselves encrypted with regularly rotated master keys</li>
-            <li style={liStyle}><strong style={{ color:'#bbb' }}>Encryption in transit:</strong> traffic is encrypted between you and Google, and again as it moves between Google data centres over their own private network rather than the public internet</li>
-            <li style={liStyle}><strong style={{ color:'#bbb' }}>Purpose built hardware:</strong> servers use custom security chips and a verified boot process, so a machine that has been tampered with will not be trusted with data</li>
-            <li style={liStyle}><strong style={{ color:'#bbb' }}>Physical data centre security:</strong> access is tightly restricted through layered controls including biometric checks, and very few staff ever enter the floors where data is held</li>
-            <li style={liStyle}><strong style={{ color:'#bbb' }}>Replication across locations:</strong> records are copied across multiple physically separate zones, so a single failure does not lose your data</li>
-            <li style={liStyle}><strong style={{ color:'#bbb' }}>Credentials never held in the clear:</strong> passwords are hashed by Google's authentication service, so neither we nor Google can read them</li>
-            <li style={liStyle}><strong style={{ color:'#bbb' }}>Independent auditing:</strong> the platform is assessed against recognised standards such as ISO/IEC 27001 and SOC 2 by outside auditors</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Encryption at rest:</strong> stored data and its backups are encrypted on disk</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Encryption in transit:</strong> every connection between the application and the database is made over TLS, and so is the traffic between you and the application</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Isolated storage per project:</strong> the database is dedicated to Assure rather than shared with other customers' data</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Credentials never held in the clear:</strong> passwords are hashed by the authentication service, so neither we nor it can read them</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Scoped queries:</strong> every read and write is filtered by your own account id, so one account cannot reach another's records</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Independent auditing:</strong> the platform is assessed against recognised standards such as SOC 2 by outside auditors</li>
           </ul>
           <p style={pStyle}>We may also disclose information where the law requires it, or where it is necessary to protect the service, our rights, or someone's safety.</p>
 
@@ -63,10 +62,10 @@ export default function PrivacyPage() {
           <p style={pStyle}>The measures we rely on:</p>
           <ul style={{ paddingLeft:'24px', marginBottom:'16px' }}>
             <li style={liStyle}><strong style={{ color:'#bbb' }}>Encryption in transit:</strong> traffic between your device and our services is protected with TLS</li>
-            <li style={liStyle}><strong style={{ color:'#bbb' }}>Encryption at rest:</strong> stored data is encrypted by our infrastructure providers</li>
-            <li style={liStyle}><strong style={{ color:'#bbb' }}>Database level access rules:</strong> your records are readable and writable only by your own authenticated account, enforced by the database itself rather than only by the app</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Encryption at rest:</strong> the database and uploaded receipt images are encrypted on disk by the platforms that host them</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Account scoped access:</strong> the database is never reachable from your browser. Every read and write goes through our server, which filters it by your own account id, so one account cannot reach another's records</li>
             <li style={liStyle}><strong style={{ color:'#bbb' }}>Private receipt storage:</strong> uploaded receipt images are stored privately and served only to you through an authenticated route</li>
-            <li style={liStyle}><strong style={{ color:'#bbb' }}>Short lived tokens:</strong> session tokens rotate automatically</li>
+            <li style={liStyle}><strong style={{ color:'#bbb' }}>Signed session cookies:</strong> sessions are held in signed, expiring cookies rather than credentials stored in your browser</li>
           </ul>
           <p style={pStyle}>No service can promise perfect security, and we will not pretend otherwise. We keep our practices under review and will tell you promptly if a breach affects your data.</p>
 
