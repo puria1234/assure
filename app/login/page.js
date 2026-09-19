@@ -241,7 +241,7 @@ export default function LoginPage() {
                 <a href="/terms" target="_blank" rel="noopener noreferrer" style={{ color:'#aaa', textDecoration:'underline' }} onClick={e => e.stopPropagation()}>Terms of Service</a>
                 {' '}and{' '}
                 <a href="/privacy" target="_blank" rel="noopener noreferrer" style={{ color:'#aaa', textDecoration:'underline' }} onClick={e => e.stopPropagation()}>Privacy Policy</a>.
-                I am at least 16 years of age.
+                I am at least 18 years of age.
               </span>
             </label>
             <button type="submit" disabled={loading || !acceptedTerms} style={{ width:'100%', background: acceptedTerms ? '#fff' : '#1a1a1a', color: acceptedTerms ? '#000' : '#444', border: acceptedTerms ? 'none' : '1px solid #2a2a2a', borderRadius:'10px', padding:'14px', fontSize:'13px', fontWeight:800, letterSpacing:'0.08em', textTransform:'uppercase', cursor:(loading || !acceptedTerms)?'not-allowed':'pointer', transition:'all 0.2s', fontFamily:'Inter, sans-serif', opacity:loading?0.6:1 }}>

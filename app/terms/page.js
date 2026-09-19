@@ -28,7 +28,7 @@ export default function TermsPage() {
           <p style={pStyle}>We are not a party to any warranty between you and a manufacturer or retailer, and we do not file or pursue claims on your behalf. Whether a claim succeeds is between you and whoever issued the warranty.</p>
 
           <h2 style={h2Style}>3. Eligibility and your account</h2>
-          <p style={pStyle}>You must be at least 16 to use Assure. You're responsible for keeping your login credentials secure and for everything that happens under your account. Tell us promptly if you believe someone else has gained access to it.</p>
+          <p style={pStyle}>You must be at least 18 to use Assure. You're responsible for keeping your login credentials secure and for everything that happens under your account. Tell us promptly if you believe someone else has gained access to it.</p>
 
           <h2 style={h2Style}>4. Acceptable use</h2>
           <p style={pStyle}>You agree not to:</p>
