@@ -47,7 +47,7 @@ export default function TermsPage() {
           <p style={pStyle}>Receipt scanning and the claim assistant are conveniences, not authorities. They are built on language models that make mistakes, misread images, and state wrong things confidently. Nothing either feature produces is legal, financial, or professional advice. Check anything that matters against the original receipt or warranty document before relying on it.</p>
 
           <h2 style={h2Style}>7. Plans and billing</h2>
-          <p style={pStyle}>Assure is currently free to use, within the usage limits shown on our pricing page. Paid plans are not yet available and no payment method is collected. If we introduce paid plans, we'll publish the pricing and terms before they take effect, and moving to a paid plan will always be something you actively choose.</p>
+          <p style={pStyle}>Assure is currently free to use, within the usage limits shown in the app. Paid plans are not yet available and no payment method is collected. If we introduce paid plans, we'll publish the pricing and terms before they take effect, and moving to a paid plan will always be something you actively choose.</p>
 
           <h2 style={h2Style}>8. Availability and changes to the service</h2>
           <p style={pStyle}>We may add, change, or remove features, and the service may be unavailable at times for maintenance or reasons outside our control. We don't guarantee uninterrupted access. Assure is not a backup service, so please keep your own copies of receipts and documents that matter to you.</p>

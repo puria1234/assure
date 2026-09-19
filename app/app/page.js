@@ -592,7 +592,7 @@ export default function AppPage() {
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url; a.download = 'aegis-warranties.csv'; a.click();
+    a.href = url; a.download = 'assure-warranties.csv'; a.click();
     URL.revokeObjectURL(url);
     showToast('CSV exported.', 'success');
   };

@@ -23,7 +23,7 @@ export default function PrivacyPage() {
           <h2 style={h2Style}>1. What we collect</h2>
           <p style={pStyle}>We only collect what the service needs to work:</p>
           <ul style={{ paddingLeft:'24px', marginBottom:'16px' }}>
-            <li style={liStyle}>Your name and email address, from when you register or sign in with Google</li>
+            <li style={liStyle}>Your name and email address, from when you register</li>
             <li style={liStyle}>Warranty details you enter, such as product names, brands, retailers, dates, prices, and serial numbers</li>
             <li style={liStyle}>Receipt images you upload for AI scanning</li>
             <li style={liStyle}>Messages you send to the AI claim assistant</li>
