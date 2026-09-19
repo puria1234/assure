@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server';
-import { getSessionUser, monthKey } from '../../../lib/session';
-import { queryOne } from '../../../lib/db';
+import { getSessionUser } from '../../../lib/session';
+import { startClaimSession, takeClaimMessage, releaseClaim, claimsUsed } from '../../../lib/claims';
 import { LIMITS } from '../../../lib/warranties';
 
-const CLAIM_LIMIT = LIMITS.claims; // Free plan, claim sessions per month
+const CLAIM_LIMIT = LIMITS.claims;             // claim sessions the plan allows
+const CLAIM_MESSAGES = LIMITS.claimMessages;   // messages allowed within one session
+const MAX_TOTAL_CHARS = 24000;                 // bounds input cost of a single request
 const AI_GATEWAY_URL = process.env.AI_GATEWAY_URL || 'https://ai-gateway.vercel.sh/v1';
 const CLAIM_MODEL = process.env.CHAT_MODEL || 'mistral/mistral-medium-3.5';
 
@@ -26,27 +28,80 @@ function stripMarkdown(text) {
     .trim();
 }
 
+// The client sends the whole conversation, so nothing in it can be trusted:
+// only user and assistant turns are allowed (a "system" turn would let a caller
+// rewrite the assistant's instructions), and size is bounded.
+function validateMessages(messages) {
+  if (!Array.isArray(messages) || messages.length === 0) return 'No messages provided.';
+  if (messages.length > CLAIM_MESSAGES * 2 + 2) return 'This conversation is too long.';
+  let total = 0;
+  for (const m of messages) {
+    if (!m || (m.role !== 'user' && m.role !== 'assistant') || typeof m.content !== 'string') {
+      return 'Invalid message.';
+    }
+    total += m.content.length;
+  }
+  if (total > MAX_TOTAL_CHARS) return 'This conversation is too long.';
+  if (messages[messages.length - 1].role !== 'user') return 'The last message must be from the user.';
+  return null;
+}
+
 export async function POST(request) {
+  // What this request took from the user's allowance, so a failure can return it.
+  let reservation = null;
+  let userId = null;
+  const giveBack = async () => {
+    if (!reservation) return;
+    const r = reservation;
+    reservation = null;
+    try {
+      await releaseClaim(userId, r.sessionId, r.isNew);
+    } catch (err) {
+      console.error('claim release failed:', err);
+    }
+  };
+
   try {
     const user = await getSessionUser();
     if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 });
+    userId = user.id;
 
-    const { messages, warrantyContext } = await request.json();
+    const { messages, warrantyContext, sessionId } = await request.json();
 
-    // The limit counts claim *sessions*, not messages. Only the opening message
-    // of a conversation is charged, so follow-up questions stay free. The old
-    // client incremented on every message, which meant a limit of 1 allowed
-    // exactly one message and then blocked the rest of the conversation.
-    const month = monthKey();
-    const isNewSession = (messages || []).filter((m) => m.role === 'user').length <= 1;
+    const invalid = validateMessages(messages);
+    if (invalid) return NextResponse.json({ error: invalid }, { status: 400 });
 
-    const existing = await queryOne(
-      'SELECT count FROM usage_counters WHERE user_id = $1 AND month = $2 AND kind = $3',
-      [user.id, month, 'claim']
-    );
-    const claimCount = existing?.count ?? 0;
-    if (isNewSession && claimCount >= CLAIM_LIMIT) {
-      return NextResponse.json({ error: `Monthly claim limit reached (${CLAIM_LIMIT}/month). Resets next month.` }, { status: 429 });
+    // A conversation exists only because the server created it, and that is
+    // the only place the claim allowance is spent. A request without a session
+    // id is therefore always a NEW conversation, however many messages it
+    // claims to contain, so a caller cannot dodge the limit by fabricating a
+    // history. Follow-ups must present the id the server issued.
+    if (sessionId) {
+      const taken = await takeClaimMessage(user.id, sessionId, CLAIM_MESSAGES);
+      if (!taken.ok) {
+        return taken.reason === 'full'
+          ? NextResponse.json(
+              { error: `This claim session has reached its ${CLAIM_MESSAGES} message limit.`, code: 'session_full' },
+              { status: 429 }
+            )
+          : NextResponse.json(
+              { error: 'This claim session could not be found. Start a new one.', code: 'session_missing' },
+              { status: 404 }
+            );
+      }
+      reservation = { sessionId, isNew: false, count: taken.count };
+    } else {
+      const started = await startClaimSession(user.id);
+      if (started.blocked) {
+        return NextResponse.json(
+          {
+            error: `You have used your free trial claim session${CLAIM_LIMIT === 1 ? '' : 's'} (${started.used}/${CLAIM_LIMIT}).`,
+            code: 'allowance_used',
+          },
+          { status: 429 }
+        );
+      }
+      reservation = { sessionId: started.sessionId, isNew: true, count: 1 };
     }
 
     const {
@@ -68,7 +123,7 @@ Product: ${productName}${brand ? ` by ${brand}` : ''}
 Category: ${category || 'Unknown'}
 Purchase Date: ${purchaseDate || 'Unknown'}
 Expiry Date: ${expiryDate || 'Unknown'}
-Status: ${status.toUpperCase()}
+Status: ${String(status).toUpperCase()}
 Retailer: ${retailer || 'Unknown'}
 Serial / Model: ${serial || 'Unknown'}
 Purchase Price: ${price ? '$' + price : 'Unknown'}
@@ -108,6 +163,7 @@ INSTRUCTIONS:
     if (!response.ok) {
       const errText = await response.text();
       console.error('AI Gateway claim-chat error:', response.status, errText);
+      await giveBack();
       if (response.status === 429) {
         return NextResponse.json({ error: 'Rate limit reached. Wait a few seconds and try again.' }, { status: 429 });
       }
@@ -121,21 +177,19 @@ INSTRUCTIONS:
       : (typeof content === 'string' ? content : '');
     const clean = stripMarkdown(raw);
 
-    let claimTotal = claimCount;
-    if (isNewSession) {
-      const updated = await queryOne(
-        `INSERT INTO usage_counters (user_id, month, kind, count) VALUES ($1, $2, 'claim', 1)
-         ON CONFLICT (user_id, month, kind)
-         DO UPDATE SET count = usage_counters.count + 1
-           RETURNING count`,
-        [user.id, month]
-      );
-      claimTotal = updated.count;
-    }
+    const { sessionId: sid, count: messageCount } = reservation;
+    reservation = null; // the reply was produced, so the allowance stays spent
 
-    return NextResponse.json({ success: true, message: clean, claimCount: claimTotal });
+    return NextResponse.json({
+      success: true,
+      message: clean,
+      sessionId: sid,
+      messageCount,
+      claimCount: await claimsUsed(user.id),
+    });
   } catch (err) {
     console.error('claim-chat error:', err);
-    return NextResponse.json({ error: err.message || 'Unknown error' }, { status: 500 });
+    await giveBack();
+    return NextResponse.json({ error: 'Something went wrong. Please try again.' }, { status: 500 });
   }
 }

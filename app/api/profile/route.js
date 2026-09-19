@@ -1,14 +1,10 @@
-import { query, queryOne } from '../../../lib/db';
-import { withUser, monthKey } from '../../../lib/session';
-import { LIMITS } from '../../../lib/warranties';
+import { queryOne } from '../../../lib/db';
+import { withUser } from '../../../lib/session';
+import { getUsage } from '../../../lib/usage';
+import { ENFORCED_PLAN } from '../../../lib/plans';
 
 export const GET = withUser(async (_request, _ctx, user) => {
-  const counters = await query(
-    'SELECT kind, count FROM usage_counters WHERE user_id = $1 AND month = $2',
-    [user.id, monthKey()]
-  );
-  const usage = { scan: 0, claim: 0 };
-  for (const row of counters) usage[row.kind] = row.count;
+  const usage = await getUsage(user.id);
 
   return Response.json({
     profile: {
@@ -21,7 +17,10 @@ export const GET = withUser(async (_request, _ctx, user) => {
       },
     },
     usage,
-    limits: LIMITS,
+    // The dashboard renders its meters from these rather than keeping its own
+    // copy of the numbers, so they cannot drift from what the server enforces.
+    limits: ENFORCED_PLAN.limits,
+    plan: { key: ENFORCED_PLAN.key, name: ENFORCED_PLAN.name, period: ENFORCED_PLAN.period },
   });
 });
 

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { getSessionUser, monthKey } from '../../../lib/session';
-import { queryOne } from '../../../lib/db';
+import { getSessionUser } from '../../../lib/session';
+import { getUsage, recordUsage } from '../../../lib/usage';
 import { LIMITS } from '../../../lib/warranties';
 
 const SCAN_LIMIT = LIMITS.scans;
@@ -62,15 +62,14 @@ export async function POST(request) {
     const user = await getSessionUser();
     if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 });
 
-    // Enforce scan limit
-    const month = monthKey();
-    const existing = await queryOne(
-      'SELECT count FROM usage_counters WHERE user_id = $1 AND month = $2 AND kind = $3',
-      [user.id, month, 'scan']
-    );
-    const scanCount = existing?.count ?? 0;
-    if (scanCount >= SCAN_LIMIT) {
-      return NextResponse.json({ error: `Monthly scan limit reached (${SCAN_LIMIT}/month). Resets next month.` }, { status: 429 });
+    // Enforce scan limit. The free trial is a one-time allowance, so this
+    // counts every scan ever made rather than resetting each month.
+    const usage = await getUsage(user.id);
+    if (usage.scan >= SCAN_LIMIT) {
+      return NextResponse.json(
+        { error: `You have used your free trial scan${SCAN_LIMIT === 1 ? '' : 's'} (${usage.scan}/${SCAN_LIMIT}).` },
+        { status: 429 }
+      );
     }
 
     const { image, mimeType } = await request.json();
@@ -110,15 +109,9 @@ export async function POST(request) {
     const extracted = JSON.parse(jsonMatch[0]);
 
     // Only charge a scan once the model actually returned usable data.
-    const updated = await queryOne(
-      `INSERT INTO usage_counters (user_id, month, kind, count) VALUES ($1, $2, 'scan', 1)
-       ON CONFLICT (user_id, month, kind)
-       DO UPDATE SET count = usage_counters.count + 1
-         RETURNING count`,
-      [user.id, month]
-    );
+    const scanCount = await recordUsage(user.id, 'scan');
 
-    return NextResponse.json({ success: true, data: extracted, scanCount: updated.count });
+    return NextResponse.json({ success: true, data: extracted, scanCount });
   } catch (err) {
     console.error('scan-receipt error:', err);
     return NextResponse.json({ error: err.message || 'Unknown error' }, { status: 500 });

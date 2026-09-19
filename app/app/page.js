@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { authClient } from '@/lib/auth/client';
+import { ENFORCED_PLAN } from '@/lib/plans';
 // ── downscale image for AI scan (Vercel Functions cap request bodies at 4.5MB) ─
 async function resizeImageForScan(file, maxDimension = 1600, quality = 0.8) {
   const dataUrl = await new Promise((resolve, reject) => {
@@ -150,14 +151,24 @@ export default function AppPage() {
 
   // ── AI receipt scan ────────────────────────────────────────────────────────
   const [scanLoading, setScanLoading] = useState(false);
-  const [scanMonthlyCount, setScanMonthlyCount] = useState(0);
-  const SCAN_LIMIT = 3;       // Free plan limit
+  const [scanUsed, setScanUsed] = useState(0);
 
   // ── AI claim assistant ─────────────────────────────────────────────────────
-  const [claimMonthlyCount, setClaimMonthlyCount] = useState(0);
-  const CLAIM_LIMIT = 1;      // Free plan limit
+  const [claimUsed, setClaimUsed] = useState(0);
+  // The conversation id the server issued, and how many of its messages are used.
+  // The server owns both; a follow-up is only accepted with the issued id.
+  const [claimSessionId, setClaimSessionId] = useState(null);
+  const [claimMessageCount, setClaimMessageCount] = useState(0);
+  const [claimFull, setClaimFull] = useState(false);
 
-  const WARRANTY_LIMIT = 5;   // Free plan limit
+  // Plan limits come from the server (see /api/profile) so the meters can never
+  // disagree with what the API enforces. The shared plan file is only the
+  // initial value shown before the profile request returns.
+  const [limits, setLimits] = useState(ENFORCED_PLAN.limits);
+  const SCAN_LIMIT = limits.scans;
+  const CLAIM_LIMIT = limits.claims;
+  const CLAIM_MESSAGES = limits.claimMessages;
+  const WARRANTY_LIMIT = limits.warranties;
   const [showClaimPicker, setShowClaimPicker] = useState(false);
   const [claimPickerSearch, setClaimPickerSearch] = useState('');
   const [showClaimModal, setShowClaimModal] = useState(false);
@@ -169,7 +180,6 @@ export default function AppPage() {
 
   // ── Refs ───────────────────────────────────────────────────────────────────
   const userMenuRef = useRef(null);
-  const loadedMonthKeyRef = useRef(new Date().toISOString().slice(0, 7));
   const toastTimerRef = useRef(null);
   const animTimers = useRef({});
   const statValuesRef = useRef({ total:0, active:0, expiring:0, expired:0 });
@@ -270,7 +280,7 @@ export default function AppPage() {
       try {
         const res = await fetch('/api/profile');
         if (res.ok) {
-          const { profile, usage } = await res.json();
+          const { profile, usage, limits: serverLimits } = await res.json();
           if (cancelled) return;
           setUserProfile(profile);
           const prefs = {
@@ -280,8 +290,9 @@ export default function AppPage() {
           setNotifPrefs(prefs);
           setSelectedDaysBefore(prefs.daysBefore);
           setSettingsForm({ name: profile.name || data.user.name || '', password: '' });
-          setScanMonthlyCount(usage.scan || 0);
-          setClaimMonthlyCount(usage.claim || 0);
+          setScanUsed(usage.scan || 0);
+          setClaimUsed(usage.claim || 0);
+          if (serverLimits) setLimits(serverLimits);
         }
       } catch (err) {
         console.error('Error loading profile:', err);
@@ -333,8 +344,8 @@ export default function AppPage() {
   // ── AI receipt scan ────────────────────────────────────────────────────────
   const scanReceiptWithAI = async () => {
     if (!receiptFile) return;
-    if (scanMonthlyCount >= SCAN_LIMIT) {
-      setFormError(`Monthly scan limit reached (${SCAN_LIMIT} scans/month). Resets next month.`);
+    if (scanUsed >= SCAN_LIMIT) {
+      setFormError(`You have used your free trial scan${SCAN_LIMIT === 1 ? '' : 's'} (${scanUsed}/${SCAN_LIMIT}).`);
       return;
     }
     setScanLoading(true);
@@ -365,7 +376,7 @@ export default function AppPage() {
         category:    prev.category    || d.category     || '',
       }));
       // The server owns the counter now and returns the new total.
-      if (typeof json.scanCount === 'number') setScanMonthlyCount(json.scanCount);
+      if (typeof json.scanCount === 'number') setScanUsed(json.scanCount);
       showToast('Receipt scanned. Fields auto-filled.', 'success');
     } catch (err) {
       setFormError(`Scan failed: ${err.message}`);
@@ -375,6 +386,14 @@ export default function AppPage() {
   };
 
   // ── AI claim assistant ─────────────────────────────────────────────────────
+  // A "claim" is a whole conversation. The server spends the allowance when it
+  // creates the conversation and hands back an id, so once the allowance is
+  // gone only a NEW conversation (no id yet) is blocked; one already underway
+  // keeps working until it reaches its own message cap.
+  const claimStarted = claimSessionId !== null;
+  const claimLocked = claimUsed >= CLAIM_LIMIT && !claimStarted;
+  const claimSessionFull = claimStarted && (claimFull || claimMessageCount >= CLAIM_MESSAGES);
+
   const openClaimModal = (w) => {
     setClaimWarranty(w);
     setClaimMessages([{
@@ -382,12 +401,15 @@ export default function AppPage() {
       content: `I'm here to help you file a warranty claim for your ${w.productName}${w.brand ? ` by ${w.brand}` : ''}.\n\nWhat issue are you experiencing with this product?`,
     }]);
     setClaimInput('');
+    setClaimSessionId(null);
+    setClaimMessageCount(0);
+    setClaimFull(false);
     setShowClaimModal(true);
   };
 
   const sendClaimMessage = async () => {
     if (!claimInput.trim() || claimLoading || !claimWarranty) return;
-    if (claimMonthlyCount >= CLAIM_LIMIT) return;
+    if (claimLocked || claimSessionFull) return;
     const userMsg = { role: 'user', content: claimInput.trim() };
     const updated = [...claimMessages, userMsg];
     setClaimMessages(updated);
@@ -399,15 +421,26 @@ export default function AppPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           messages: updated,
+          sessionId: claimSessionId,
           warrantyContext: { ...claimWarranty, status: getStatus(claimWarranty) },
         }),
       });
-      if (!res.ok) throw new Error('Request failed');
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        // Limit responses are shown by the banner below the conversation, not
+        // as a chat bubble.
+        if (err.code === 'allowance_used') { setClaimUsed(CLAIM_LIMIT); return; }
+        if (err.code === 'session_full') { setClaimFull(true); return; }
+        throw new Error(err.error || 'Request failed');
+      }
       const json = await res.json();
       setClaimMessages(prev => [...prev, { role: 'assistant', content: json.message }]);
-      if (typeof json.claimCount === 'number') setClaimMonthlyCount(json.claimCount);
-    } catch {
-      setClaimMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, I ran into an error. Please try again.' }]);
+      if (json.sessionId) setClaimSessionId(json.sessionId);
+      if (typeof json.messageCount === 'number') setClaimMessageCount(json.messageCount);
+      if (typeof json.claimCount === 'number') setClaimUsed(json.claimCount);
+    } catch (err) {
+      const known = err && err.message && err.message !== 'Request failed' && err.message !== 'Failed to fetch';
+      setClaimMessages(prev => [...prev, { role: 'assistant', content: known ? err.message : 'Sorry, I ran into an error. Please try again.' }]);
     } finally {
       setClaimLoading(false);
     }
@@ -448,7 +481,7 @@ export default function AppPage() {
       // The API enforces the plan limit and ownership; this is only a fast
       // client-side guard so the user sees the message before a round trip.
       if (!editingId && warranties.length >= WARRANTY_LIMIT) {
-        setFormError(`Free plan limit reached (${WARRANTY_LIMIT} warranties). Upgrade to add more.`);
+        setFormError(`Free trial limit reached (${WARRANTY_LIMIT} warranties). Assure+ is coming soon.`);
         setSavingWarranty(false);
         return;
       }
@@ -771,12 +804,12 @@ export default function AppPage() {
                           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                           <span style={{ fontSize:'10px', fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.08em' }}>AI Scans</span>
                         </div>
-                        <span style={{ fontSize:'11px', fontWeight:700, color: scanMonthlyCount >= SCAN_LIMIT ? '#ef4444' : scanMonthlyCount >= SCAN_LIMIT - 1 ? '#f59e0b' : '#4ade80' }}>
-                          {scanMonthlyCount}/{SCAN_LIMIT}
+                        <span style={{ fontSize:'11px', fontWeight:700, color: scanUsed >= SCAN_LIMIT ? '#ef4444' : scanUsed >= SCAN_LIMIT - 1 ? '#f59e0b' : '#4ade80' }}>
+                          {scanUsed}/{SCAN_LIMIT}
                         </span>
                       </div>
                       <div style={{ height:'3px', borderRadius:'2px', background:'#2a2a2a', overflow:'hidden' }}>
-                        <div style={{ height:'100%', borderRadius:'2px', width:`${Math.min((scanMonthlyCount / SCAN_LIMIT) * 100, 100)}%`, background: scanMonthlyCount >= SCAN_LIMIT ? '#ef4444' : scanMonthlyCount >= SCAN_LIMIT - 1 ? '#f59e0b' : '#4ade80', transition:'width 0.3s ease' }} />
+                        <div style={{ height:'100%', borderRadius:'2px', width:`${Math.min((scanUsed / SCAN_LIMIT) * 100, 100)}%`, background: scanUsed >= SCAN_LIMIT ? '#ef4444' : scanUsed >= SCAN_LIMIT - 1 ? '#f59e0b' : '#4ade80', transition:'width 0.3s ease' }} />
                       </div>
                     </div>
                     {/* Claim chats row */}
@@ -784,17 +817,17 @@ export default function AppPage() {
                       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', marginBottom:'5px' }}>
                         <div style={{ display:'flex', alignItems:'center', gap:'5px' }}>
                           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                          <span style={{ fontSize:'10px', fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.08em' }}>Claim Messages</span>
+                          <span style={{ fontSize:'10px', fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.08em' }}>Claim Sessions</span>
                         </div>
-                        <span style={{ fontSize:'11px', fontWeight:700, color: claimMonthlyCount >= CLAIM_LIMIT ? '#ef4444' : claimMonthlyCount >= CLAIM_LIMIT - 1 ? '#f59e0b' : '#4ade80' }}>
-                          {claimMonthlyCount}/{CLAIM_LIMIT}
+                        <span style={{ fontSize:'11px', fontWeight:700, color: claimUsed >= CLAIM_LIMIT ? '#ef4444' : claimUsed >= CLAIM_LIMIT - 1 ? '#f59e0b' : '#4ade80' }}>
+                          {claimUsed}/{CLAIM_LIMIT}
                         </span>
                       </div>
                       <div style={{ height:'3px', borderRadius:'2px', background:'#2a2a2a', overflow:'hidden' }}>
-                        <div style={{ height:'100%', borderRadius:'2px', width:`${Math.min((claimMonthlyCount / CLAIM_LIMIT) * 100, 100)}%`, background: claimMonthlyCount >= CLAIM_LIMIT ? '#ef4444' : claimMonthlyCount >= CLAIM_LIMIT - 1 ? '#f59e0b' : '#4ade80', transition:'width 0.3s ease' }} />
+                        <div style={{ height:'100%', borderRadius:'2px', width:`${Math.min((claimUsed / CLAIM_LIMIT) * 100, 100)}%`, background: claimUsed >= CLAIM_LIMIT ? '#ef4444' : claimUsed >= CLAIM_LIMIT - 1 ? '#f59e0b' : '#4ade80', transition:'width 0.3s ease' }} />
                       </div>
                     </div>
-                    <div style={{ fontSize:'10px', color:'#333' }}>Resets on the 1st of each month</div>
+                    <div style={{ fontSize:'10px', color:'#333' }}>Free trial allowance, one time</div>
                   </div>
                 </div>
                 <button onClick={() => { setShowNotifModal(true); setUserMenuOpen(false); }} style={{ display:'flex', alignItems:'center', gap:'10px', width:'100%', padding:'9px 12px', background:'none', border:'none', color:'#888', fontSize:'13px', cursor:'pointer', borderRadius:'7px', transition:'all 0.15s', textAlign:'left' }} onMouseOver={e=>e.currentTarget.style.background='#161616'} onMouseOut={e=>e.currentTarget.style.background='none'}>
@@ -1026,21 +1059,21 @@ export default function AppPage() {
                         {!receiptFile && formData.receiptUrl && <div style={{ fontSize:'11px', color:'#555', marginTop:'2px' }}>Click × to remove</div>}
                       </div>
                       {receiptFile && (
-                        <button type="button" onClick={scanReceiptWithAI} disabled={scanLoading || scanMonthlyCount >= SCAN_LIMIT}
-                          style={{ display:'flex', alignItems:'center', gap:'6px', background: scanMonthlyCount >= SCAN_LIMIT ? '#111' : '#ffffff', border:`1px solid ${scanMonthlyCount >= SCAN_LIMIT ? '#222' : '#ffffff'}`, borderRadius:'7px', color: scanMonthlyCount >= SCAN_LIMIT ? '#444' : '#000000', fontSize:'11px', fontWeight:700, cursor: scanLoading || scanMonthlyCount >= SCAN_LIMIT ? 'not-allowed' : 'pointer', padding:'6px 10px', flexShrink:0, transition:'all 0.15s', fontFamily:'Inter, sans-serif' }}
+                        <button type="button" onClick={scanReceiptWithAI} disabled={scanLoading || scanUsed >= SCAN_LIMIT}
+                          style={{ display:'flex', alignItems:'center', gap:'6px', background: scanUsed >= SCAN_LIMIT ? '#111' : '#ffffff', border:`1px solid ${scanUsed >= SCAN_LIMIT ? '#222' : '#ffffff'}`, borderRadius:'7px', color: scanUsed >= SCAN_LIMIT ? '#444' : '#000000', fontSize:'11px', fontWeight:700, cursor: scanLoading || scanUsed >= SCAN_LIMIT ? 'not-allowed' : 'pointer', padding:'6px 10px', flexShrink:0, transition:'all 0.15s', fontFamily:'Inter, sans-serif' }}
                           onMouseOver={e => {
-                            if (!(scanLoading || scanMonthlyCount >= SCAN_LIMIT)) {
+                            if (!(scanLoading || scanUsed >= SCAN_LIMIT)) {
                               e.currentTarget.style.background = '#e5e7eb';
                               e.currentTarget.style.borderColor = '#e5e7eb';
                             }
                           }}
                           onMouseOut={e => {
-                            if (!(scanLoading || scanMonthlyCount >= SCAN_LIMIT)) {
+                            if (!(scanLoading || scanUsed >= SCAN_LIMIT)) {
                               e.currentTarget.style.background = '#ffffff';
                               e.currentTarget.style.borderColor = '#ffffff';
                             }
                           }}
-                          title={scanMonthlyCount >= SCAN_LIMIT ? 'Monthly limit reached' : 'Use AI to extract fields from this receipt'}>
+                          title={scanUsed >= SCAN_LIMIT ? 'Free trial scan used' : 'Use AI to extract fields from this receipt'}>
                           {scanLoading ? (
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ animation:'spin 0.7s linear infinite' }}><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
                           ) : (
@@ -1344,11 +1377,15 @@ export default function AppPage() {
             </div>
 
             {/* Input row */}
-            {claimMonthlyCount >= CLAIM_LIMIT ? (
+            {claimLocked || claimSessionFull ? (
               <div style={{ padding:'16px 20px', borderTop:'1px solid #1a1a1a', background:'#0d0d0d', flexShrink:0, textAlign:'center' }}>
                 <div style={{ display:'inline-flex', alignItems:'center', gap:'8px', background:'rgba(239,68,68,0.06)', border:'1px solid rgba(239,68,68,0.15)', borderRadius:'10px', padding:'10px 16px' }}>
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                  <span style={{ fontSize:'12px', color:'#ef4444', fontWeight:600 }}>Message limit reached ({CLAIM_LIMIT}/{CLAIM_LIMIT}). Resets next month.</span>
+                  <span style={{ fontSize:'12px', color:'#ef4444', fontWeight:600 }}>
+                    {claimSessionFull
+                      ? `This claim session has reached its ${CLAIM_MESSAGES} message limit.`
+                      : `You have used your free trial claim session (${claimUsed}/${CLAIM_LIMIT}).`}
+                  </span>
                 </div>
               </div>
             ) : (

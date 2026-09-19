@@ -26,7 +26,7 @@ export const POST = withUser(async (request, _ctx, user) => {
   );
   if (count >= LIMITS.warranties) {
     return Response.json(
-      { error: `Free plan is limited to ${LIMITS.warranties} warranties.` },
+      { error: `The free trial is limited to ${LIMITS.warranties} warranties.` },
       { status: 403 }
     );
   }

@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { authClient } from '@/lib/auth/client';
+import { PLANS } from '@/lib/plans';
+import PlanCard from '@/components/PlanCard';
 
 function PreviewCategoryIcon({ category }) {
   const props = {
@@ -134,6 +136,7 @@ export default function LandingPage() {
         <div className="nav-links hide-sm" style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
           <a href="#features" className="nav-link" style={{ fontSize: '11px', fontWeight: '600', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#888', textDecoration: 'none', transition: 'color 0.2s' }} onMouseOver={e => e.target.style.color = '#fff'} onMouseOut={e => e.target.style.color = '#888'}>Features</a>
           <a href="#how-it-works" className="nav-link" style={{ fontSize: '11px', fontWeight: '600', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#888', textDecoration: 'none', transition: 'color 0.2s' }} onMouseOver={e => e.target.style.color = '#fff'} onMouseOut={e => e.target.style.color = '#888'}>How It Works</a>
+          <a href="#pricing" className="nav-link" style={{ fontSize: '11px', fontWeight: '600', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#888', textDecoration: 'none', transition: 'color 0.2s' }} onMouseOver={e => e.target.style.color = '#fff'} onMouseOut={e => e.target.style.color = '#888'}>Pricing</a>
           <a href={user ? "/app" : "/login"} className="btn-cta" style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#fff', color: '#000', padding: '10px 20px', borderRadius: '6px', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.06em', textDecoration: 'none', transition: 'all 0.2s' }}>
             {user ? "Go to Dashboard" : "Open App"}
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -178,6 +181,7 @@ export default function LandingPage() {
       >
         <a href="#features" onClick={() => setMobileMenuOpen(false)} style={{ fontSize: '20px', fontWeight: '700', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#fff', textDecoration: 'none' }}>Features</a>
         <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} style={{ fontSize: '20px', fontWeight: '700', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#fff', textDecoration: 'none' }}>How It Works</a>
+        <a href="#pricing" onClick={() => setMobileMenuOpen(false)} style={{ fontSize: '20px', fontWeight: '700', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#fff', textDecoration: 'none' }}>Pricing</a>
         <a href={user ? "/app" : "/login"} onClick={() => setMobileMenuOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#fff', color: '#000', padding: '14px 28px', borderRadius: '8px', fontSize: '14px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.06em', textDecoration: 'none', marginTop: '16px' }}>
           {user ? "Go to Dashboard" : "Open App"}
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -753,6 +757,21 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* PRICING */}
+      <section id="pricing" className="reveal">
+        <div className="eyebrow" style={{ marginBottom:'20px' }}>Pricing</div>
+        <div style={{ display:'flex', alignItems:'flex-end', justifyContent:'space-between', flexWrap:'wrap', gap:'16px', marginBottom:'48px' }}>
+          <h2 className="headline-lg">Simple, honest<br/>pricing.</h2>
+          <div style={{ display:'inline-flex', alignItems:'center', border:'1px solid #2a2a2a', borderRadius:'100px', padding:'6px 16px', background:'rgba(255,255,255,0.03)' }}>
+            <span style={{ fontSize:'11px', fontWeight:'700', letterSpacing:'0.15em', textTransform:'uppercase', color:'#888' }}>Assure+ coming soon</span>
+          </div>
+        </div>
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(260px, 1fr))', gap:'16px', maxWidth:'680px' }}>
+          <PlanCard plan={PLANS.free} href={user ? '/app' : '/login'} cta={user ? 'Open Assure' : 'Start free trial'} />
+          <PlanCard plan={PLANS.plus} highlighted available={false} />
+        </div>
+      </section>
+
       {/* BIG STATEMENT */}
       <div style={{ background:'#0c0c0c', borderTop:'1px solid #141414', borderBottom:'1px solid #141414', padding:'100px 48px', textAlign:'center', overflow:'hidden' }} className="reveal">
         <div style={{ maxWidth:'900px', margin:'0 auto' }}>
@@ -785,7 +804,7 @@ export default function LandingPage() {
               Never miss<br/>another claim.
             </h2>
             <p style={{ fontSize:'17px', color:'#777', marginBottom:'40px', maxWidth:'420px', marginLeft:'auto', marginRight:'auto', lineHeight:'1.6' }}>
-              Start tracking your warranties in minutes. Free to use.
+              Start tracking your warranties in minutes with a free trial. No card required.
             </p>
             <a href="/login" className="btn-cta-dark">
               Open Assure
