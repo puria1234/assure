@@ -6,7 +6,7 @@ import { LIMITS } from '../../../lib/warranties';
 const SCAN_LIMIT = LIMITS.scans;
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 const AI_GATEWAY_URL = process.env.AI_GATEWAY_URL || 'https://ai-gateway.vercel.sh/v1';
-const VISION_MODEL = process.env.VISION_MODEL || 'mistral/mistral-medium-3.5';
+const VISION_MODEL = 'openai/gpt-5.6-luna';
 
 async function callVisionModel(image, mimeType) {
   const apiKey = process.env.AI_GATEWAY_API_KEY;

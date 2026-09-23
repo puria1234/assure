@@ -7,7 +7,7 @@ const CLAIM_LIMIT = LIMITS.claims;             // claim sessions the plan allows
 const CLAIM_MESSAGES = LIMITS.claimMessages;   // messages allowed within one session
 const MAX_TOTAL_CHARS = 24000;                 // bounds input cost of a single request
 const AI_GATEWAY_URL = process.env.AI_GATEWAY_URL || 'https://ai-gateway.vercel.sh/v1';
-const CLAIM_MODEL = process.env.CHAT_MODEL || 'mistral/mistral-medium-3.5';
+const CLAIM_MODEL = 'openai/gpt-5.6-luna';
 
 function stripMarkdown(text) {
   return text
