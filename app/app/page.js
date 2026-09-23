@@ -1398,13 +1398,13 @@ export default function AppPage() {
                     placeholder="Describe your issue or ask for a claim letter…"
                     rows={2}
                     style={{ flex:1, background:'#141414', border:'1px solid #242424', borderRadius:'10px', color:'#fff', padding:'10px 14px', fontSize:'13px', outline:'none', resize:'none', fontFamily:'Inter, sans-serif', lineHeight:'1.5', transition:'border-color 0.15s' }}
-                    onFocus={e => e.target.style.borderColor='#555'}
+                    onFocus={e => e.target.style.borderColor='#4361ee'}
                     onBlur={e => e.target.style.borderColor='#242424'}
                   />
                   <button
                     onClick={sendClaimMessage}
                     disabled={claimLoading || !claimInput.trim()}
-                    style={{ background:'#fff', color:'#000', border:'none', borderRadius:'10px', padding:'10px 16px', fontSize:'13px', fontWeight:800, cursor: claimLoading || !claimInput.trim() ? 'not-allowed' : 'pointer', opacity: claimLoading || !claimInput.trim() ? 0.4 : 1, transition:'all 0.15s', fontFamily:'Inter, sans-serif', height:'46px', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                    style={{ background:'#4361ee', color:'#fff', border:'none', borderRadius:'10px', padding:'10px 16px', fontSize:'13px', fontWeight:800, cursor: claimLoading || !claimInput.trim() ? 'not-allowed' : 'pointer', opacity: claimLoading || !claimInput.trim() ? 0.4 : 1, transition:'all 0.15s', fontFamily:'Inter, sans-serif', height:'46px', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                   </button>
                 </div>
@@ -1430,7 +1430,7 @@ export default function AppPage() {
       <button
         type="button"
         onClick={() => { setClaimPickerSearch(''); setShowClaimPicker(true); }}
-        style={{ position:'fixed', bottom:'28px', right:'28px', zIndex:200, display:'flex', alignItems:'center', gap:'9px', background:'#fff', border:'none', borderRadius:'14px', color:'#000', fontSize:'13px', fontWeight:700, padding:'13px 20px', cursor:'pointer', boxShadow:'0 4px 24px rgba(0,0,0,0.25), 0 1px 4px rgba(0,0,0,0.15)', transition:'all 0.2s', fontFamily:'Inter, sans-serif', letterSpacing:'0.01em' }}
+        style={{ position:'fixed', bottom:'28px', right:'28px', zIndex:200, display:'flex', alignItems:'center', gap:'9px', background:'#4361ee', border:'none', borderRadius:'14px', color:'#fff', fontSize:'13px', fontWeight:700, padding:'13px 20px', cursor:'pointer', boxShadow:'0 4px 24px rgba(0,0,0,0.25), 0 1px 4px rgba(0,0,0,0.15)', transition:'all 0.2s', fontFamily:'Inter, sans-serif', letterSpacing:'0.01em' }}
         onMouseOver={e => { e.currentTarget.style.transform='translateY(-2px)'; e.currentTarget.style.boxShadow='0 8px 32px rgba(0,0,0,0.35), 0 2px 8px rgba(0,0,0,0.2)'; }}
         onMouseOut={e => { e.currentTarget.style.transform='translateY(0)'; e.currentTarget.style.boxShadow='0 4px 24px rgba(0,0,0,0.25), 0 1px 4px rgba(0,0,0,0.15)'; }}>
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>

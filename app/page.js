@@ -137,7 +137,7 @@ export default function LandingPage() {
           <a href="#features" className="nav-link" style={{ fontSize: '11px', fontWeight: '600', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#888', textDecoration: 'none', transition: 'color 0.2s' }} onMouseOver={e => e.target.style.color = '#fff'} onMouseOut={e => e.target.style.color = '#888'}>Features</a>
           <a href="#how-it-works" className="nav-link" style={{ fontSize: '11px', fontWeight: '600', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#888', textDecoration: 'none', transition: 'color 0.2s' }} onMouseOver={e => e.target.style.color = '#fff'} onMouseOut={e => e.target.style.color = '#888'}>How It Works</a>
           <a href="#pricing" className="nav-link" style={{ fontSize: '11px', fontWeight: '600', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#888', textDecoration: 'none', transition: 'color 0.2s' }} onMouseOver={e => e.target.style.color = '#fff'} onMouseOut={e => e.target.style.color = '#888'}>Pricing</a>
-          <a href={user ? "/app" : "/login"} className="btn-cta" style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#fff', color: '#000', padding: '10px 20px', borderRadius: '6px', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.06em', textDecoration: 'none', transition: 'all 0.2s' }}>
+          <a href={user ? "/app" : "/login"} className="btn-cta" style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#4361ee', color: '#fff', padding: '10px 20px', borderRadius: '6px', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.06em', textDecoration: 'none', transition: 'all 0.2s' }}>
             {user ? "Go to Dashboard" : "Open App"}
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </a>
@@ -182,7 +182,7 @@ export default function LandingPage() {
         <a href="#features" onClick={() => setMobileMenuOpen(false)} style={{ fontSize: '20px', fontWeight: '700', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#fff', textDecoration: 'none' }}>Features</a>
         <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} style={{ fontSize: '20px', fontWeight: '700', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#fff', textDecoration: 'none' }}>How It Works</a>
         <a href="#pricing" onClick={() => setMobileMenuOpen(false)} style={{ fontSize: '20px', fontWeight: '700', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#fff', textDecoration: 'none' }}>Pricing</a>
-        <a href={user ? "/app" : "/login"} onClick={() => setMobileMenuOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#fff', color: '#000', padding: '14px 28px', borderRadius: '8px', fontSize: '14px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.06em', textDecoration: 'none', marginTop: '16px' }}>
+        <a href={user ? "/app" : "/login"} onClick={() => setMobileMenuOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#4361ee', color: '#fff', padding: '14px 28px', borderRadius: '8px', fontSize: '14px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.06em', textDecoration: 'none', marginTop: '16px' }}>
           {user ? "Go to Dashboard" : "Open App"}
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
@@ -378,7 +378,7 @@ export default function LandingPage() {
                             <div style={{ fontSize:'22px', fontWeight:900, letterSpacing:'-0.03em', marginBottom:'6px', textAlign:'left' }}>Welcome back, John</div>
                             <div style={{ fontSize:'13px', color:'#555' }}>You have 24 warranties tracked · 3 expiring soon.</div>
                           </div>
-                          <button style={{ display:'inline-flex', alignItems:'center', gap:'8px', background:'#fff', color:'#000', fontWeight:700, letterSpacing:'0.05em', borderRadius:'8px', padding:'10px 20px', border:'none', textTransform:'uppercase', fontSize:'12px' }}>
+                          <button style={{ display:'inline-flex', alignItems:'center', gap:'8px', background:'#4361ee', color:'#fff', fontWeight:700, letterSpacing:'0.05em', borderRadius:'8px', padding:'10px 20px', border:'none', textTransform:'uppercase', fontSize:'12px' }}>
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
                             Add Warranty
                           </button>
@@ -408,7 +408,7 @@ export default function LandingPage() {
                         </div>
                         <div style={{ display:'flex', gap:'4px' }}>
                           {[true, false].map((active, idx) => (
-                            <div key={idx} style={{ padding:'7px 10px', borderRadius:'6px', background:active ? '#fff' : 'transparent', border:`1px solid ${active ? '#fff' : '#2a2a2a'}`, color:active ? '#000' : '#666', lineHeight:1 }}>
+                            <div key={idx} style={{ padding:'7px 10px', borderRadius:'6px', background:active ? '#4361ee' : 'transparent', border:`1px solid ${active ? '#4361ee' : '#2a2a2a'}`, color:active ? '#fff' : '#666', lineHeight:1 }}>
                               {idx === 0 ? (
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /></svg>
                               ) : (
@@ -421,9 +421,9 @@ export default function LandingPage() {
 
                       <div style={{ display:'flex', gap:'8px', marginBottom:'20px', flexWrap:'wrap' }}>
                         {previewFilters.map(({ label, count, active }) => (
-                          <div key={label} style={{ padding:'6px 16px', borderRadius:'100px', fontSize:'12px', fontWeight:600, border:`1px solid ${active ? '#fff' : '#2a2a2a'}`, background:active ? '#fff' : 'transparent', color:active ? '#000' : '#888', textTransform:'uppercase', letterSpacing:'0.06em', display:'inline-flex', alignItems:'center' }}>
+                          <div key={label} style={{ padding:'6px 16px', borderRadius:'100px', fontSize:'12px', fontWeight:600, border:`1px solid ${active ? '#4361ee' : '#2a2a2a'}`, background:active ? '#4361ee' : 'transparent', color:active ? '#fff' : '#888', textTransform:'uppercase', letterSpacing:'0.06em', display:'inline-flex', alignItems:'center' }}>
                             {label}
-                            <span style={{ background:active ? 'rgba(0,0,0,0.2)' : '#1a1a1a', borderRadius:'10px', padding:'1px 6px', fontSize:'10px', marginLeft:'4px' }}>{count}</span>
+                            <span style={{ background:active ? 'rgba(255,255,255,0.25)' : '#1a1a1a', borderRadius:'10px', padding:'1px 6px', fontSize:'10px', marginLeft:'4px' }}>{count}</span>
                           </div>
                         ))}
                       </div>
@@ -481,7 +481,7 @@ export default function LandingPage() {
                   </div>{/* end screen content */}
 
                   {/* ── Demo FAB: File a Claim, pinned to screen corner ── */}
-                  <div style={{ position:'absolute', bottom:'20px', right:'20px', zIndex:20, display:'inline-flex', alignItems:'center', gap:'9px', background:'#fff', borderRadius:'14px', color:'#000', fontSize:'13px', fontWeight:700, padding:'13px 20px', boxShadow:'0 4px 24px rgba(0,0,0,0.3), 0 1px 4px rgba(0,0,0,0.15)', fontFamily:'Inter, sans-serif', letterSpacing:'0.01em', cursor:'default' }}>
+                  <div style={{ position:'absolute', bottom:'20px', right:'20px', zIndex:20, display:'inline-flex', alignItems:'center', gap:'9px', background:'#4361ee', borderRadius:'14px', color:'#fff', fontSize:'13px', fontWeight:700, padding:'13px 20px', boxShadow:'0 4px 24px rgba(0,0,0,0.3), 0 1px 4px rgba(0,0,0,0.15)', fontFamily:'Inter, sans-serif', letterSpacing:'0.01em', cursor:'default' }}>
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                     File a Claim
                   </div>

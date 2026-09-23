@@ -5,6 +5,14 @@
   --font-caps: var(--font-inter), 'Inter', sans-serif;
 }
 
+:root {
+  --brand: #4361ee;
+  --brand-hover: #5b72f2;
+  --brand-light: #8b93ff;
+  --brand-surface: #12142b;
+  --brand-border: rgba(67, 97, 238, 0.35);
+}
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 body { background: #0a0a0a; color: #ffffff; font-family: var(--font-sans); }
@@ -53,14 +61,14 @@ body { background: #0a0a0a; color: #ffffff; font-family: var(--font-sans); }
 /* BUTTONS */
 .btn-cta {
   display: inline-flex; align-items: center; gap: 0px;
-  background: #fff; color: #000;
+  background: var(--brand); color: #fff;
   font-weight: 800; font-size: 13px;
   letter-spacing: 0.08em; text-transform: uppercase;
   padding: 16px 36px; border-radius: 100px;
   text-decoration: none; border: none; cursor: pointer;
   transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
 }
-.btn-cta:hover { transform: scale(1.04); background: #e8e8e8; }
+.btn-cta:hover { transform: scale(1.04); background: var(--brand-hover); }
 .btn-cta:active { transform: scale(0.97); }
 
 .btn-outline {
@@ -76,22 +84,22 @@ body { background: #0a0a0a; color: #ffffff; font-family: var(--font-sans); }
 
 .btn-cta-dark {
   display: inline-flex; align-items: center; gap: 0px;
-  background: #000; color: #fff;
+  background: var(--brand); color: #fff;
   font-weight: 800; font-size: 13px;
   letter-spacing: 0.08em; text-transform: uppercase;
   padding: 16px 36px; border-radius: 100px;
   text-decoration: none; border: none; cursor: pointer;
   transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
 }
-.btn-cta-dark:hover { transform: scale(1.04); background: #1a1a1a; }
+.btn-cta-dark:hover { transform: scale(1.04); background: var(--brand-hover); }
 
 .btn-primary {
   display: inline-flex; align-items: center; gap: 8px;
-  background: #fff; color: #000; font-weight: 700; letter-spacing: 0.05em;
+  background: var(--brand); color: #fff; font-weight: 700; letter-spacing: 0.05em;
   border-radius: 8px; padding: 10px 20px; transition: all 0.15s; border: none;
   cursor: pointer; text-transform: uppercase; font-size: 12px; white-space: nowrap;
 }
-.btn-primary:hover { background: #e0e0e0; transform: translateY(-1px); }
+.btn-primary:hover { background: var(--brand-hover); transform: translateY(-1px); }
 .btn-primary:active { transform: translateY(0); }
 
 .btn-ghost {
@@ -170,7 +178,7 @@ nav {
   position: absolute; top: -20%; left: 50%; transform: translateX(-50%);
   width: 60vw; height: 60vw; max-width: 800px; max-height: 800px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,255,255,0.035) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(67,97,238,0.12) 0%, transparent 70%);
   pointer-events: none;
 }
 .hero-content { position: relative; z-index: 2; max-width: 1200px; }
@@ -228,11 +236,11 @@ section { padding: 120px 48px; max-width: 1280px; margin: 0 auto; }
 .feature-card::before {
   content: '';
   position: absolute; inset: 0;
-  background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(255,255,255,0.05), transparent);
+  background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(67,97,238,0.1), transparent);
   opacity: 0;
   transition: opacity 0.3s;
 }
-.feature-card:hover { border-color: #333; transform: translateY(-4px); }
+.feature-card:hover { border-color: var(--brand-border); transform: translateY(-4px); }
 .feature-card:hover::before { opacity: 1; }
 
 .feature-icon {
@@ -370,7 +378,7 @@ footer {
   color: #fff; padding: 10px 14px; width: 100%; font-size: 14px;
   transition: border-color 0.15s; outline: none; font-family: 'Inter', sans-serif;
 }
-.input-field:focus { border-color: #555; }
+.input-field:focus { border-color: var(--brand); }
 .input-field::placeholder { color: #555; }
 .input-field option { background: #1a1a1a; font-family: 'Inter', sans-serif; }
 
@@ -399,7 +407,7 @@ footer {
   text-transform: uppercase; letter-spacing: 0.06em;
 }
 .filter-pill:hover { border-color: #555; color: #ccc; }
-.filter-pill.active { background: #fff; color: #000; border-color: #fff; }
+.filter-pill.active { background: var(--brand); color: #fff; border-color: var(--brand); }
 
 .search-bar {
   background: #111; border: 1px solid #222; border-radius: 10px;
@@ -407,7 +415,7 @@ footer {
   font-size: 14px; outline: none; transition: border-color 0.15s;
   font-family: 'Inter', sans-serif;
 }
-.search-bar:focus { border-color: #444; }
+.search-bar:focus { border-color: var(--brand); }
 .search-bar::placeholder { color: #555; }
 
 .progress-bar { height: 4px; border-radius: 2px; background: #1a1a1a; overflow: hidden; }
@@ -427,7 +435,7 @@ footer {
   border: 1px solid #2a2a2a; color: #666; cursor: pointer;
   transition: all 0.15s; line-height: 1;
 }
-.view-btn:hover, .view-btn.active { background: #fff; color: #000; border-color: #fff; }
+.view-btn:hover, .view-btn.active { background: var(--brand); color: #fff; border-color: var(--brand); }
 
 .list-row {
   display: grid; grid-template-columns: 2fr 1.2fr 1.1fr 1.1fr 100px 70px;

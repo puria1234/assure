@@ -141,7 +141,7 @@ export default function LoginPage() {
         {/* Tabs */}
         <div style={{ display:'flex', background:'#141414', border:'1px solid #1e1e1e', borderRadius:'10px', padding:'4px', marginBottom:'28px' }}>
           {[['signin','Sign In'],['signup','Create Account']].map(([t,label]) => (
-            <button key={t} onClick={() => { setTab(t); setError(''); setSuccessMsg(''); }} style={{ flex:1, padding:'9px 4px', borderRadius:'7px', border:'none', background:tab===t?'#fff':'transparent', color:tab===t?'#000':'#666', fontSize:'13px', fontWeight:700, letterSpacing:'0.04em', textTransform:'uppercase', cursor:'pointer', transition:'all 0.2s', fontFamily:'Inter, sans-serif' }}>
+            <button key={t} onClick={() => { setTab(t); setError(''); setSuccessMsg(''); }} style={{ flex:1, padding:'9px 4px', borderRadius:'7px', border:'none', background:tab===t?'#4361ee':'transparent', color:tab===t?'#fff':'#666', fontSize:'13px', fontWeight:700, letterSpacing:'0.04em', textTransform:'uppercase', cursor:'pointer', transition:'all 0.2s', fontFamily:'Inter, sans-serif' }}>
               {label}
             </button>
           ))}
@@ -183,13 +183,13 @@ export default function LoginPage() {
               </div>
             </div>
             <div style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom:'20px' }}>
-              <input type="checkbox" id="rememberMe" checked={rememberMe} onChange={e => setRememberMe(e.target.checked)} style={{ appearance:'none', width:'16px', height:'16px', border:'1px solid #333', borderRadius:'4px', background:rememberMe ? '#fff' : 'transparent', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', position:'relative' }} />
+              <input type="checkbox" id="rememberMe" checked={rememberMe} onChange={e => setRememberMe(e.target.checked)} style={{ appearance:'none', width:'16px', height:'16px', border:'1px solid #333', borderRadius:'4px', background:rememberMe ? '#4361ee' : 'transparent', borderColor:rememberMe ? '#4361ee' : '#333', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', position:'relative' }} />
               <style dangerouslySetInnerHTML={{ __html: `
-                #rememberMe:checked::after { content: ''; position: absolute; width: 4px; height: 8px; border: solid #000; border-width: 0 2px 2px 0; transform: rotate(45deg); margin-top: -2px; }
+                #rememberMe:checked::after { content: ''; position: absolute; width: 4px; height: 8px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); margin-top: -2px; }
               ` }} />
               <label htmlFor="rememberMe" style={{ fontSize:'12px', color:'#888', cursor:'pointer', userSelect:'none' }}>Remember me</label>
             </div>
-            <button type="submit" disabled={loading} style={{ width:'100%', background:'#fff', color:'#000', border:'none', borderRadius:'10px', padding:'14px', fontSize:'13px', fontWeight:800, letterSpacing:'0.08em', textTransform:'uppercase', cursor:loading?'not-allowed':'pointer', transition:'all 0.2s', fontFamily:'Inter, sans-serif', opacity:loading?0.6:1 }}>
+            <button type="submit" disabled={loading} style={{ width:'100%', background:'#4361ee', color:'#fff', border:'none', borderRadius:'10px', padding:'14px', fontSize:'13px', fontWeight:800, letterSpacing:'0.08em', textTransform:'uppercase', cursor:loading?'not-allowed':'pointer', transition:'all 0.2s', fontFamily:'Inter, sans-serif', opacity:loading?0.6:1 }}>
               {loading ? <div style={{ display:'flex', alignItems:'center', justifyContent:'center' }}><SpinnerIcon /></div> : 'Sign In'}
             </button>
           </form>
@@ -265,7 +265,7 @@ export default function LoginPage() {
               <label style={{ display:'block', fontSize:'11px', fontWeight:700, color:'#666', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:'8px' }}>Email address</label>
               <input type="email" placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)} required style={inputStyle} onFocus={e => e.target.style.borderColor='#555'} onBlur={e => e.target.style.borderColor='#242424'} />
             </div>
-            <button type="submit" disabled={loading} style={{ width:'100%', background:'#fff', color:'#000', border:'none', borderRadius:'10px', padding:'14px', fontSize:'13px', fontWeight:800, letterSpacing:'0.08em', textTransform:'uppercase', cursor:loading?'not-allowed':'pointer', transition:'all 0.2s', fontFamily:'Inter, sans-serif', opacity:loading?0.6:1 }}>
+            <button type="submit" disabled={loading} style={{ width:'100%', background:'#4361ee', color:'#fff', border:'none', borderRadius:'10px', padding:'14px', fontSize:'13px', fontWeight:800, letterSpacing:'0.08em', textTransform:'uppercase', cursor:loading?'not-allowed':'pointer', transition:'all 0.2s', fontFamily:'Inter, sans-serif', opacity:loading?0.6:1 }}>
               {loading ? <div style={{ display:'flex', alignItems:'center', justifyContent:'center' }}><SpinnerIcon /></div> : 'Send Reset Link'}
             </button>
           </form>
